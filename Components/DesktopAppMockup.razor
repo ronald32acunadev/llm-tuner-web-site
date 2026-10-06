@@ -54,7 +54,7 @@
         <div style="background:#090e15;padding:16px 20px;border-top:1px solid var(--color-border-weak);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
             <div style="max-width:750px;">
                 <div style="font-weight:600;font-size:0.95rem;color:var(--color-text-strong);margin-bottom:4px;display:flex;align-items:center;gap:8px;">
-                    <span style="color:var(--color-accent);">[Paso @(currentStepIndex + 1)]</span>
+                    <span style="color:var(--color-accent);">[@(DocData.CurrentLanguage == "es" ? "Paso" : "Step") @(currentStepIndex + 1)]</span>
                     <span>@(DocData.CurrentLanguage == "es" ? CurrentStep.TitleEs : CurrentStep.TitleEn)</span>
                 </div>
                 <p style="margin:0;font-size:0.85rem;color:var(--color-text-weak);line-height:1.45;">

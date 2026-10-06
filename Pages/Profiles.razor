@@ -24,7 +24,7 @@
             </div>
             <div>
                 <h3 style="font-size:1rem;font-weight:600;color:var(--color-text-strong);margin-bottom:4px;">
-                    Speed (Máximo TPS)
+                    @(DocData.CurrentLanguage == "es" ? "Speed (Máximo TPS)" : "Speed (Max TPS)")
                 </h3>
                 <p style="font-size:0.85rem;color:var(--color-text-weak);line-height:1.45;margin:0;">
                     @(DocData.CurrentLanguage == "es" 
@@ -41,9 +41,9 @@
             <div>
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
                     <h3 style="font-size:1rem;font-weight:600;color:var(--color-accent);margin:0;">
-                        Balanced (Default)
+                        @(DocData.CurrentLanguage == "es" ? "Balanced (Predeterminado)" : "Balanced (Default)")
                     </h3>
-                    <span class="pill ok" style="font-size:0.65rem;">Recommended</span>
+                    <span class="pill ok" style="font-size:0.65rem;">@(DocData.CurrentLanguage == "es" ? "Recomendado" : "Recommended")</span>
                 </div>
                 <p style="font-size:0.85rem;color:var(--color-text-weak);line-height:1.45;margin:0;">
                     @(DocData.CurrentLanguage == "es" 
@@ -59,7 +59,7 @@
             </div>
             <div>
                 <h3 style="font-size:1rem;font-weight:600;color:var(--color-text-strong);margin-bottom:4px;">
-                    Quality (Fidelidad Total)
+                    @(DocData.CurrentLanguage == "es" ? "Quality (Fidelidad Total)" : "Quality (Full Precision)")
                 </h3>
                 <p style="font-size:0.85rem;color:var(--color-text-weak);line-height:1.45;margin:0;">
                     @(DocData.CurrentLanguage == "es" 

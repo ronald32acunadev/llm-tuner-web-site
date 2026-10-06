@@ -17,8 +17,8 @@
   --bad: #f87171;
   --code-bg: #0b121b;
 
-  --font-sans: 'IBM Plex Sans', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'Ubuntu', 'IBM Plex Sans', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Ubuntu Mono', 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
 
   /* Color system aliases */
   --color-background: var(--bg);
