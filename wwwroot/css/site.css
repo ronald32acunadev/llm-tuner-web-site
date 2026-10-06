@@ -1,74 +1,44 @@
+/* llm-tuner Design System — Dark Mode Only (llmtuner palette) */
 :root {
-  --color-background: hsl(0, 9%, 7%);
-  --color-background-weak: hsl(0, 6%, 10%);
-  --color-background-weak-hover: hsl(0, 6%, 15%);
-  --color-background-strong: hsl(0, 15%, 94%);
-  --color-background-interactive: hsl(62, 100%, 90%);
-  --color-background-interactive-weaker: hsl(60, 20%, 8%);
-
-  --color-text: hsl(0, 4%, 71%);
-  --color-text-weak: hsl(0, 2%, 49%);
-  --color-text-weaker: hsl(0, 3%, 28%);
-  --color-text-strong: hsl(0, 15%, 94%);
-  --color-text-inverted: hsl(0, 9%, 7%);
-
-  --color-border: hsl(0, 3%, 28%);
-  --color-border-weak: hsl(0, 4%, 18%);
-  --color-icon: hsl(10, 3%, 43%);
-
-  --color-accent: #00e5ff;
-  --color-accent-dim: rgba(0, 229, 255, 0.12);
-  --color-success: #03b000;
-  --color-warning: #fbbf24;
-  --color-danger: #f87171;
+  --bg: #090e15;
+  --surface: #0f1722;
+  --surface-hover: #162232;
+  --ink: #e2e8f0;
+  --muted: #8b9bb0;
+  --line: #1e2c3d;
+  --line-weak: #15202e;
+  --accent: #00e5ff;
+  --accent-ink: #05111d;
+  --accent-dim: rgba(0, 229, 255, 0.12);
+  --gpu: #00e5ff;
+  --cpu: #3d4f63;
+  --ok: #34d399;
+  --warn: #fbbf24;
+  --bad: #f87171;
+  --code-bg: #0b121b;
 
   --font-sans: 'IBM Plex Sans', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
 
-  /* Aliases for backwards compatibility */
-  --bg: var(--color-background);
-  --surface: var(--color-background-weak);
-  --ink: var(--color-text-strong);
-  --muted: var(--color-text-weak);
-  --line: var(--color-border-weak);
-  --accent: var(--color-accent);
-  --accent-ink: #000000;
-  --gpu: var(--color-accent);
-  --cpu: var(--color-text-weak);
-  --ok: var(--color-success);
-  --warn: var(--color-warning);
-  --bad: var(--color-danger);
-  --code-bg: var(--color-background-weak);
+  /* Color system aliases */
+  --color-background: var(--bg);
+  --color-background-weak: var(--surface);
+  --color-background-weak-hover: var(--surface-hover);
+  --color-background-strong: #ffffff;
+  --color-text: var(--ink);
+  --color-text-weak: var(--muted);
+  --color-text-weaker: var(--cpu);
+  --color-text-strong: #ffffff;
+  --color-text-inverted: var(--accent-ink);
+  --color-border: var(--line);
+  --color-border-weak: var(--line-weak);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-success: var(--ok);
+  --color-warning: var(--warn);
+  --color-danger: var(--bad);
   --font: var(--font-sans);
   --mono: var(--font-mono);
-}
-
-[data-theme='light'] {
-  --color-background: hsl(0, 20%, 99%);
-  --color-background-weak: hsl(0, 8%, 97%);
-  --color-background-weak-hover: hsl(0, 8%, 94%);
-  --color-background-strong: hsl(0, 5%, 12%);
-  --color-background-interactive: hsl(62, 84%, 88%);
-  --color-background-interactive-weaker: hsl(64, 74%, 95%);
-
-  --color-text: hsl(0, 1%, 39%);
-  --color-text-weak: hsl(0, 1%, 60%);
-  --color-text-weaker: hsl(30, 2%, 81%);
-  --color-text-strong: hsl(0, 5%, 12%);
-  --color-text-inverted: hsl(0, 20%, 99%);
-
-  --color-border: hsl(30, 2%, 81%);
-  --color-border-weak: hsla(0, 100%, 3%, 0.12);
-  --color-accent: #0284c7;
-  --color-accent-dim: rgba(2, 132, 199, 0.12);
-  --color-success: #16a34a;
-
-  --bg: var(--color-background);
-  --surface: var(--color-background-weak);
-  --ink: var(--color-text-strong);
-  --muted: var(--color-text-weak);
-  --line: var(--color-border-weak);
-  --code-bg: var(--color-background-weak);
 }
 
 * {
@@ -79,11 +49,13 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--bg);
+  color-scheme: dark;
 }
 
 body {
-  background-color: var(--color-background);
-  color: var(--color-text);
+  background-color: var(--bg);
+  color: var(--ink);
   font-family: var(--font-sans);
   font-size: 15px;
   line-height: 1.6;
@@ -104,7 +76,7 @@ code, pre, .mono {
   font-family: var(--font-mono);
 }
 
-/* NAVBAR (OpenCode style) */
+/* NAVBAR */
 .navbar {
   position: sticky;
   top: 0;
@@ -113,8 +85,9 @@ code, pre, .mono {
   align-items: center;
   justify-content: space-between;
   padding: 0 clamp(16px, 4vw, 48px);
-  background: var(--color-background);
-  border-bottom: 1px solid var(--color-border-weak);
+  background-color: rgba(9, 14, 21, 0.92);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px);
   z-index: 1000;
 }
 
@@ -123,7 +96,7 @@ code, pre, .mono {
   align-items: center;
   gap: 28px;
   font-size: 0.9rem;
-  color: var(--color-text-weak);
+  color: var(--muted);
 }
 
 .navbar .nav-links a {
@@ -131,17 +104,17 @@ code, pre, .mono {
 }
 
 .navbar .nav-links a:hover {
-  color: var(--color-text-strong);
+  color: var(--accent);
 }
 
 .cta-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid var(--color-text-strong);
-  color: var(--color-text-strong);
+  border: 1px solid var(--accent);
+  color: var(--accent);
   background: transparent;
-  padding: 8px 16px;
+  padding: 7px 16px;
   font-size: 0.85rem;
   font-family: var(--font-mono);
   font-weight: 500;
@@ -150,11 +123,12 @@ code, pre, .mono {
 }
 
 .cta-button:hover {
-  background: var(--color-text-strong);
-  color: var(--color-text-inverted);
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: 0 0 16px var(--accent-dim);
 }
 
-/* HERO (OpenCode style) */
+/* HERO */
 .hero {
   text-align: center;
   padding: clamp(48px, 9vw, 96px) 20px 48px;
@@ -164,26 +138,26 @@ code, pre, .mono {
 
 .hero h1 {
   font-size: clamp(2.2rem, 5.5vw, 3.8rem);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.15;
-  color: var(--color-text-strong);
+  color: #ffffff;
   margin-bottom: 20px;
   text-wrap: balance;
 }
 
 .hero p {
   font-size: clamp(1rem, 2vw, 1.25rem);
-  color: var(--color-text-weak);
-  max-width: 680px;
+  color: var(--muted);
+  max-width: 700px;
   margin: 0 auto 36px;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
-/* INSTALLATION TABS & PANELS (Pixel-perfect OpenCode style) */
+/* OPENCODE INSTALLATION TABS (Styled in llmtuner palette) */
 .opencode-install {
   max-width: 640px;
-  margin: 0 auto 40px;
+  margin: 0 auto 36px;
   text-align: left;
 }
 
@@ -191,11 +165,11 @@ code, pre, .mono {
   display: flex;
   gap: 32px;
   align-items: center;
-  border: 1px solid var(--color-border-weak);
+  border: 1px solid var(--line);
   border-bottom: none;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  background: var(--color-background-weak);
+  background: var(--surface);
   padding: 0 20px;
   overflow-x: auto;
 }
@@ -205,7 +179,7 @@ code, pre, .mono {
   border: 0;
   padding: 14px 0;
   cursor: pointer;
-  color: var(--color-text-weak);
+  color: var(--muted);
   font-family: var(--font-mono);
   font-size: 0.9rem;
   line-height: 1;
@@ -214,17 +188,17 @@ code, pre, .mono {
 }
 
 .install-tab-btn:hover {
-  color: var(--color-text-strong);
+  color: var(--ink);
 }
 
 .install-tab-btn.active {
-  color: var(--color-text-strong);
-  border-bottom-color: var(--color-text-strong);
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .install-command-panel {
-  background: var(--color-background-weak);
-  border: 1px solid var(--color-border-weak);
+  background: var(--code-bg);
+  border: 1px solid var(--line);
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
   padding: 16px 20px;
@@ -237,24 +211,25 @@ code, pre, .mono {
 .install-script {
   font-family: var(--font-mono);
   font-size: 0.95rem;
-  color: var(--color-text-strong);
+  color: var(--ink);
   overflow-x: auto;
   white-space: nowrap;
 }
 
 .install-script .protocol {
-  color: var(--color-text-weak);
+  color: var(--muted);
 }
 
 .install-script .highlight {
-  color: var(--color-accent);
+  color: var(--accent);
+  font-weight: 500;
 }
 
-/* TECHNICAL STATS / "GROWTH" WIREFRAME SECTION (OpenCode style) */
+/* TECHNICAL STATS / GROWTH WIREFRAME SECTION */
 .growth-section {
   padding: 48px 0;
-  border-top: 1px solid var(--color-border-weak);
-  border-bottom: 1px solid var(--color-border-weak);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   margin: 56px 0;
 }
 
@@ -266,8 +241,8 @@ code, pre, .mono {
 }
 
 .growth-stat-card {
-  border: 1px solid var(--color-border-weak);
-  background: var(--color-background-weak);
+  border: 1px solid var(--line);
+  background: var(--surface);
   border-radius: 6px;
   padding: 24px;
   display: flex;
@@ -276,38 +251,42 @@ code, pre, .mono {
   text-align: center;
   position: relative;
   overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.growth-stat-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
 }
 
 .stat-illustration {
-  height: 140px;
+  height: 130px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  color: var(--color-text-weak);
-  opacity: 0.75;
+  margin-bottom: 18px;
 }
 
 .stat-caption {
   font-family: var(--font-mono);
   font-size: 0.85rem;
-  color: var(--color-text-weak);
+  color: var(--muted);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .stat-caption figure {
-  color: var(--color-text-weaker);
+  color: var(--cpu);
 }
 
 .stat-caption strong {
-  font-size: 1.3rem;
-  color: var(--color-text-strong);
+  font-size: 1.35rem;
+  color: var(--accent);
 }
 
-/* WHAT IS LLM TUNER (Retro-technical feature list with [*] bullets) */
+/* WHAT IS LLM TUNER (Retro-technical feature list) */
 .what-section {
   padding: 48px 0;
 }
@@ -319,13 +298,13 @@ code, pre, .mono {
 .what-title h3 {
   font-size: 1.75rem;
   font-weight: 600;
-  color: var(--color-text-strong);
+  color: #ffffff;
   letter-spacing: -0.02em;
   margin-bottom: 8px;
 }
 
 .what-title p {
-  color: var(--color-text-weak);
+  color: var(--muted);
   font-size: 1.05rem;
 }
 
@@ -342,28 +321,28 @@ code, pre, .mono {
   align-items: flex-start;
   gap: 12px;
   font-size: 0.92rem;
-  line-height: 1.5;
-  color: var(--color-text);
+  line-height: 1.55;
+  color: var(--ink);
 }
 
 .what-list li .bullet {
   font-family: var(--font-mono);
-  color: var(--color-accent);
+  color: var(--accent);
   font-weight: 600;
   flex-shrink: 0;
   user-select: none;
 }
 
 .what-list li strong {
-  color: var(--color-text-strong);
+  color: #ffffff;
   font-weight: 600;
   margin-right: 6px;
 }
 
-/* PANELS & CARDS (Matte minimal) */
+/* PANELS & CARDS */
 .panel {
-  background: var(--color-background-weak);
-  border: 1px solid var(--color-border-weak);
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 6px;
   padding: 24px;
 }
@@ -380,27 +359,27 @@ code, pre, .mono {
   font-size: 0.75rem;
   padding: 3px 9px;
   border-radius: 99px;
-  border: 1px solid var(--color-border);
-  color: var(--color-text-weak);
+  border: 1px solid var(--line);
+  color: var(--muted);
 }
 
 .pill.ok {
-  color: var(--color-success);
+  color: var(--ok);
   border-color: currentColor;
 }
 
 .pill.accent {
-  color: var(--color-accent);
+  color: var(--accent);
   border-color: currentColor;
 }
 
-/* TERMINAL MOCKUP (Minimalist Dark) */
+/* TERMINAL MOCKUP */
 .terminal-window {
-  background: var(--color-background-weak);
-  border: 1px solid var(--color-border-weak);
+  background: var(--code-bg);
+  border: 1px solid var(--line);
   border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 .titlebar {
@@ -408,8 +387,8 @@ code, pre, .mono {
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  background: hsl(0, 6%, 8%);
-  border-bottom: 1px solid var(--color-border-weak);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
   user-select: none;
   font-family: var(--font-mono);
   font-size: 0.8rem;
@@ -433,7 +412,7 @@ code, pre, .mono {
 .term-tab {
   background: transparent;
   border: none;
-  color: var(--color-text-weak);
+  color: var(--muted);
   font-family: var(--font-mono);
   font-size: 0.8rem;
   padding: 6px 12px;
@@ -442,16 +421,17 @@ code, pre, .mono {
 }
 
 .term-tab.active {
-  color: var(--color-text-strong);
-  border-bottom-color: var(--color-text-strong);
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .terminal-body {
   padding: 20px;
+  background: var(--code-bg);
   font-family: var(--font-mono);
   font-size: 0.88rem;
   line-height: 1.6;
-  color: var(--color-text);
+  color: var(--ink);
   overflow-x: auto;
 }
 
@@ -459,24 +439,24 @@ code, pre, .mono {
   margin-bottom: 4px;
 }
 
-.prompt { color: var(--color-accent); font-weight: 600; }
-.command { color: var(--color-text-strong); }
-.status-ok { color: var(--color-success); }
-.status-warn { color: var(--color-warning); }
-.dim { color: var(--color-text-weaker); }
+.prompt { color: var(--accent); font-weight: 600; }
+.command { color: #ffffff; }
+.status-ok { color: var(--ok); }
+.status-warn { color: var(--warn); }
+.dim { color: var(--cpu); }
 
 /* DESKTOP APP MOCKUP */
 .desktop-window {
-  background: var(--color-background-weak);
-  border: 1px solid var(--color-border-weak);
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 6px;
   overflow: hidden;
 }
 
 .window-header {
   padding: 10px 16px;
-  background: hsl(0, 6%, 8%);
-  border-bottom: 1px solid var(--color-border-weak);
+  background: #090e15;
+  border-bottom: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -491,7 +471,8 @@ code, pre, .mono {
 }
 
 .left-rail {
-  border-right: 1px solid var(--color-border-weak);
+  background: var(--surface);
+  border-right: 1px solid var(--line);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -499,6 +480,7 @@ code, pre, .mono {
 }
 
 .right-content {
+  background: var(--bg);
   padding: 20px;
 }
 
@@ -510,26 +492,28 @@ code, pre, .mono {
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.15s ease;
-  border: 1px solid var(--color-border-weak);
-  color: var(--color-text);
+  border: 1px solid var(--line);
+  color: var(--ink);
   background: transparent;
 }
 
 .btn:hover {
-  background: var(--color-background-weak-hover);
-  color: var(--color-text-strong);
+  background: var(--surface-hover);
+  color: #ffffff;
+  border-color: var(--accent);
 }
 
 .btn.primary {
-  background: var(--color-text-strong);
-  color: var(--color-text-inverted);
-  border-color: var(--color-text-strong);
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 600;
 }
 
 .copy-btn {
   background: transparent;
-  border: 1px solid var(--color-border-weak);
-  color: var(--color-text-weak);
+  border: 1px solid var(--line);
+  color: var(--muted);
   padding: 4px 10px;
   border-radius: 4px;
   font-family: var(--font-mono);
@@ -542,30 +526,31 @@ code, pre, .mono {
 }
 
 .copy-btn:hover {
-  color: var(--color-text-strong);
-  border-color: var(--color-text-strong);
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
-.theme-switcher, .lang-switcher {
+.lang-switcher {
   display: inline-flex;
-  border: 1px solid var(--color-border-weak);
+  border: 1px solid var(--line);
   border-radius: 4px;
   overflow: hidden;
 }
 
-.theme-btn, .lang-btn {
+.lang-btn {
   background: transparent;
   border: none;
-  padding: 4px 8px;
+  padding: 4px 10px;
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  color: var(--color-text-weak);
+  color: var(--muted);
   cursor: pointer;
 }
 
-.theme-btn.active, .lang-btn.active {
-  background: var(--color-background-weak-hover);
-  color: var(--color-text-strong);
+.lang-btn.active {
+  background: var(--surface-hover);
+  color: var(--accent);
+  font-weight: 600;
 }
 
 /* RESPONSIVE */
@@ -575,7 +560,7 @@ code, pre, .mono {
   }
   .left-rail {
     border-right: none;
-    border-bottom: 1px solid var(--color-border-weak);
+    border-bottom: 1px solid var(--line);
   }
   .navbar .nav-links {
     display: none;
