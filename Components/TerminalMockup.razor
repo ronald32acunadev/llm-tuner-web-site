@@ -32,33 +32,33 @@
         @if (activeTab == "wizard")
         {
             <div class="term-line"><span class="prompt">$</span> <span class="command">llm-tuner</span></div>
-            <div class="term-line status-ok">✓ Hardware detected: AMD Ryzen 7 5800X (16 threads) · 32 GB RAM</div>
-            <div class="term-line status-ok">✓ GPU 0: NVIDIA GeForce RTX 5070 12GB (PCIe 4.0 x16, 11.8 GB free)</div>
-            <div class="term-line status-ok">✓ GPU 1: NVIDIA GeForce RTX 5070 12GB (PCIe 4.0 x8, 11.9 GB free)</div>
+            <div class="term-line status-ok">✓ Hardware detected: AMD Ryzen 7 5800X (16 threads) · 76.5 GB RAM</div>
+            <div class="term-line status-ok">✓ GPU 1: NVIDIA GeForce RTX 5070 12GB (PCIe 3.0 x16, 11.9 GB free) [Main]</div>
+            <div class="term-line status-ok">✓ GPU 0: NVIDIA GeForce RTX 5070 12GB (PCIe 2.0 x2, 11.9 GB free)</div>
             <div class="term-line dim">------------------------------------------------------------</div>
             <div class="term-line prompt">? Which engine do you want to use? › <span class="command">LM Studio (detected: 0.4.25)</span></div>
-            <div class="term-line prompt">? Choose model: › <span class="command">qwen/qwen2.5-coder-32b</span> (32.8B params, 64 layers)</div>
-            <div class="term-line prompt">? Context length (tokens): › <span class="command">16384</span></div>
+            <div class="term-line prompt">? Choose model: › <span class="command">qwen/qwen3-coder-30b</span> (30.8B params, 48 layers MoE)</div>
+            <div class="term-line prompt">? Context length (tokens): › <span class="command">32768</span></div>
             <div class="term-line prompt">? Select load profile: › <span class="command">balanced</span> <span class="status-ok">[Recommended: 100% fits in GPU]</span></div>
-            <div class="term-line dim">  ⚡ Estimator calculated split: 32 layers → GPU0, 32 layers → GPU1</div>
-            <div class="term-line status-warn">ℹ No preset exists for this context & profile. Measuring 3 candidates...</div>
-            <div class="term-line">  [1/3] KV f16  · 64 layers GPU · deep ctx ... <span class="command">21.4 t/s</span> (Peak VRAM: 21.8 GB)</div>
-            <div class="term-line">  [2/3] KV q8_0 · 64 layers GPU · deep ctx ... <span class="status-ok">26.8 t/s (WINNER)</span> (Peak VRAM: 19.4 GB)</div>
-            <div class="term-line">  [3/3] KV q4_0 · 64 layers GPU · deep ctx ... <span class="command">27.3 t/s</span> (Peak VRAM: 18.1 GB)</div>
-            <div class="term-line status-ok">✓ Preset saved to: ~/.config/llm-tuner/presets/lmstudio_qwen-qwen2.5-coder-32b_16384_balanced.json</div>
-            <div class="term-line status-ok">✓ Model loaded in LM Studio successfully at 26.8 t/s. Ready for requests!</div>
+            <div class="term-line dim">  ⚡ Estimator calculated split: 26 layers → GPU1, 22 layers → GPU0 (0 CPU offload)</div>
+            <div class="term-line status-warn">ℹ Measuring 3 candidate configurations on dual-card topology...</div>
+            <div class="term-line">  [1/3] KV q4_0 · 48 layers GPU · 32K ctx ... <span class="command">139.2 t/s</span> (Peak VRAM: 18.2 GB)</div>
+            <div class="term-line">  [2/3] KV q8_0 · 48 layers GPU · 32K ctx ... <span class="command">159.5 t/s</span> (Peak VRAM: 20.4 GB)</div>
+            <div class="term-line">  [3/3] KV f16  · 48 layers GPU · 32K ctx ... <span class="status-ok">177.1 t/s (WINNER)</span> (Peak VRAM: 24.0 GB)</div>
+            <div class="term-line status-ok">✓ Preset saved to: ~/.config/llm-tuner/presets/lmstudio__qwen_qwen3-coder-30b__32768.json</div>
+            <div class="term-line status-ok">✓ Model loaded in LM Studio successfully at 177.1 t/s. Ready for requests!</div>
         }
         else if (activeTab == "headless")
         {
-            <div class="term-line"><span class="prompt">$</span> <span class="command">llm-tuner --engine lmstudio --model qwen/qwen2.5-coder-32b --ctx 16384 --profile quality --yes</span>
+            <div class="term-line"><span class="prompt">$</span> <span class="command">llm-tuner --engine lmstudio --model qwen/qwen3-coder-30b --ctx 32768 --profile balanced --yes</span>
             </div>
             <div class="term-line dim">[llm-tuner] Running in non-interactive mode (--yes enabled)</div>
             <div class="term-line status-ok">[Hardware] 2x NVIDIA RTX 5070 identified. Dual-card load balancing active.</div>
-            <div class="term-line">[GGUF] Inspecting tensors for 'qwen2.5-coder-32b-instruct-q8_0.gguf'...</div>
-            <div class="term-line status-ok">✓ Quality profile enforced: Using Q8_0 weights with KV Cache q8_0.</div>
-            <div class="term-line status-ok">✓ Layer split plan: GPU0: 32 layers | GPU1: 32 layers | 0 CPU offload.</div>
+            <div class="term-line">[Preset] Hardware fingerprint match found: using cached winner configuration.</div>
+            <div class="term-line status-ok">✓ Balanced profile enforced: KV Cache f16, flash-attn on, ubatch 512.</div>
+            <div class="term-line status-ok">✓ Layer split plan: GPU1: 26 layers | GPU0: 22 layers | 0 CPU offload.</div>
             <div class="term-line status-ok">✓ Applying hardware configuration and model preset...</div>
-            <div class="term-line status-ok">✓ Loaded: LM Studio &#64; 24.9 t/s. Zero manual intervention required.</div>
+            <div class="term-line status-ok">✓ Loaded: LM Studio &#64; 145.8 t/s (instant load ~15s). Zero manual intervention required.</div>
         }
         else if (activeTab == "settings")
         {
@@ -78,11 +78,12 @@
             <div class="term-line"><span class="prompt">$</span> <span class="command">llm-tuner --presets</span></div>
             <div class="term-line status-ok">Stored Presets Directory: ~/.config/llm-tuner/presets/</div>
             <div class="term-line dim">ENGINE     MODEL                     CTX    PROFILE   KV     OFFLOAD  SPEED     CREATED</div>
-            <div class="term-line">lmstudio   qwen2.5-coder-32b         16K    balanced  q8_0   ALL GPU  <span class="status-ok">26.8 t/s</span>  2026-10-05 14:20</div>
-            <div class="term-line">lmstudio   qwen2.5-coder-32b         16K    quality   q8_0   ALL GPU  <span class="status-ok">24.9 t/s</span>  2026-10-05 15:02</div>
-            <div class="term-line">lmstudio   qwen2.5-coder-32b         32K    speed     q4_0   ALL GPU  <span class="status-ok">27.3 t/s</span>  2026-10-05 16:11</div>
-            <div class="term-line">ollama     qwen2.5-coder:14b         16K    balanced  q8_0   ALL GPU  <span class="status-ok">48.2 t/s</span>  2026-10-05 11:45</div>
-            <div class="term-line status-ok">✓ 4 cached presets ready for instant loading without re-benchmarking.</div>
+            <div class="term-line">lmstudio   qwen/qwen3-coder-30b      32K    balanced  f16    ALL GPU  <span class="status-ok">177.1 t/s</span>  2026-10-06 00:07</div>
+            <div class="term-line">lmstudio   qwen/qwen3-coder-30b      32K    quality   f16    ALL GPU  <span class="status-ok">110.5 t/s</span>  2026-10-05 05:36</div>
+            <div class="term-line">lmstudio   qwen/qwen3-coder-30b      32K    speed     f16    ALL GPU  <span class="status-ok">94.0 t/s</span>   2026-10-05 05:29</div>
+            <div class="term-line">lmstudio   mistralai/ministral-3-3b  8K     balanced  f16    ALL GPU  <span class="status-ok">110.3 t/s</span>  2026-10-05 05:14</div>
+            <div class="term-line">lmstudio   meta/muse-glimmer         31.2K  balanced  f16    ALL GPU  <span class="status-ok">32.5 t/s</span>   2026-10-02 02:09</div>
+            <div class="term-line status-ok">✓ 5 cached presets ready for instant loading without re-benchmarking.</div>
         }
     </div>
 </div>
@@ -93,7 +94,7 @@
     private string GetActiveCommand() => activeTab switch
     {
         "wizard" => "llm-tuner",
-        "headless" => "llm-tuner --engine lmstudio --model qwen/qwen2.5-coder-32b --ctx 16384 --profile quality --yes",
+        "headless" => "llm-tuner --engine lmstudio --model qwen/qwen3-coder-30b --ctx 32768 --profile balanced --yes",
         "settings" => "llm-tuner /settings",
         "presets" => "llm-tuner --presets",
         _ => "llm-tuner"
