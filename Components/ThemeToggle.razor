@@ -1,0 +1,44 @@
+@inject ThemeService Theme
+@implements IDisposable
+
+<div class="theme-switcher">
+    <button type="button" class="theme-btn @(Theme.CurrentTheme == "dark" ? "active" : "")" @onclick="@(() => SetTheme("dark"))" title="Dark theme">
+        <span>🌙</span>
+        <span class="btn-text">Dark</span>
+    </button>
+    <button type="button" class="theme-btn @(Theme.CurrentTheme == "light" ? "active" : "")" @onclick="@(() => SetTheme("light"))" title="Light theme">
+        <span>☀️</span>
+        <span class="btn-text">Light</span>
+    </button>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Theme.OnThemeChanged += HandleThemeChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Theme.InitializeAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task SetTheme(string theme)
+    {
+        await Theme.SetThemeAsync(theme);
+    }
+
+    private void HandleThemeChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Theme.OnThemeChanged -= HandleThemeChanged;
+    }
+}

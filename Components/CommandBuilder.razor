@@ -1,0 +1,136 @@
+@inject DocumentationDataService DocData
+
+<div class="generator-panel panel">
+    <header>
+        <h3 style="font-size:1.05rem;font-weight:600;display:flex;align-items:center;gap:8px;">
+            <span>🛠️</span>
+            @(DocData.CurrentLanguage == "es" ? "Generador Interactivo de Comandos CLI" : "Interactive CLI Command Builder")
+        </h3>
+        <span class="pill ok">Interactive Helper</span>
+    </header>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-top:12px;">
+        <!-- Engine selection -->
+        <div class="form-group">
+            <label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px;">
+                @(DocData.CurrentLanguage == "es" ? "Motor (Engine):" : "Engine:")
+            </label>
+            <div style="display:flex;gap:6px;">
+                <button type="button" class="btn" style="flex:1;padding:6px;font-size:0.8rem;background:@(engine == "lmstudio" ? "var(--accent)" : "transparent");border:1px solid var(--line);color:@(engine == "lmstudio" ? "var(--accent-ink)" : "var(--ink)");"
+                        @onclick="@(() => engine = "lmstudio")">
+                    LM Studio
+                </button>
+                <button type="button" class="btn" style="flex:1;padding:6px;font-size:0.8rem;background:@(engine == "ollama" ? "var(--accent)" : "transparent");border:1px solid var(--line);color:@(engine == "ollama" ? "var(--accent-ink)" : "var(--ink)");"
+                        @onclick="@(() => engine = "ollama")">
+                    Ollama
+                </button>
+            </div>
+        </div>
+
+        <!-- Model selection -->
+        <div class="form-group">
+            <label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px;">
+                @(DocData.CurrentLanguage == "es" ? "Modelo (Model):" : "Model:")
+            </label>
+            <input type="text" @bind="model" class="form-control" style="width:100%;padding:6px 10px;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--ink);font-family:var(--mono);font-size:0.85rem;" placeholder="e.g. qwen/qwen2.5-coder-32b" />
+            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;">
+                @foreach (var m in popularModels)
+                {
+                    <button type="button" style="background:transparent;border:1px solid var(--line);font-size:0.7rem;color:var(--muted);padding:2px 6px;border-radius:4px;cursor:pointer;"
+                            @onclick="@(() => model = m)">
+                        @m.Split('/').Last()
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Context length -->
+        <div class="form-group">
+            <label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px;">
+                @(DocData.CurrentLanguage == "es" ? "Contexto (tokens):" : "Context tokens:")
+            </label>
+            <select @bind="ctx" class="form-control" style="width:100%;padding:6px 10px;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--ink);font-family:var(--mono);font-size:0.85rem;">
+                <option value="4096">4096 (4K)</option>
+                <option value="8192">8192 (8K)</option>
+                <option value="16384">16384 (16K)</option>
+                <option value="32768">32768 (32K)</option>
+                <option value="65536">65536 (64K)</option>
+            </select>
+        </div>
+
+        <!-- Profile selection -->
+        <div class="form-group">
+            <label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px;">
+                @(DocData.CurrentLanguage == "es" ? "Perfil de Carga:" : "Load Profile:")
+            </label>
+            <select @bind="profile" class="form-control" style="width:100%;padding:6px 10px;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--ink);font-family:var(--mono);font-size:0.85rem;">
+                <option value="balanced">balanced (Recommended)</option>
+                <option value="speed">speed (Max tokens/sec)</option>
+                <option value="quality">quality (Max precision)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Flags toggles -->
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);">
+        <span style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:8px;">
+            @(DocData.CurrentLanguage == "es" ? "Banderas & Opciones:" : "Flags & Modifiers:")
+        </span>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" @bind="yesFlag" />
+                <code>--yes</code> <span style="color:var(--muted);font-size:0.75rem;">(auto-apply)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" @bind="forceFlag" />
+                <code>--force</code> <span style="color:var(--muted);font-size:0.75rem;">(ignore cached preset)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" @bind="dryRunFlag" />
+                <code>--dry-run</code> <span style="color:var(--muted);font-size:0.75rem;">(no disk changes)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" @bind="jsonFlag" />
+                <code>--json</code> <span style="color:var(--muted);font-size:0.75rem;">(structured output)</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Live Preview Box -->
+    <div style="margin-top:16px;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div style="overflow-x:auto;max-width:100%;">
+            <span style="color:var(--accent);font-family:var(--mono);font-size:0.85rem;margin-right:6px;">$</span>
+            <code style="font-size:0.9rem;color:var(--ink);background:transparent;padding:0;">@BuildCommand()</code>
+        </div>
+        <CopyButton Text="@BuildCommand()" Label="@(DocData.CurrentLanguage == "es" ? "Copiar Comando" : "Copy Command")" />
+    </div>
+</div>
+
+@code {
+    private string engine = "lmstudio";
+    private string model = "qwen/qwen2.5-coder-32b";
+    private string ctx = "16384";
+    private string profile = "balanced";
+    private bool yesFlag = true;
+    private bool forceFlag = false;
+    private bool dryRunFlag = false;
+    private bool jsonFlag = false;
+
+    private readonly List<string> popularModels = new()
+    {
+        "qwen/qwen2.5-coder-32b",
+        "deepseek-r1-distill-qwen-14b",
+        "llama-3.3-70b-instruct",
+        "mistral:7b"
+    };
+
+    private string BuildCommand()
+    {
+        var cmd = $"llm-tuner --engine {engine} --model {model} --ctx {ctx} --profile {profile}";
+        if (yesFlag) cmd += " --yes";
+        if (forceFlag) cmd += " --force";
+        if (dryRunFlag) cmd += " --dry-run";
+        if (jsonFlag) cmd += " --json";
+        return cmd;
+    }
+}

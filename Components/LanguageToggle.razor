@@ -1,0 +1,33 @@
+@inject DocumentationDataService DocData
+@implements IDisposable
+
+<div class="lang-switcher">
+    <button type="button" class="lang-btn @(DocData.CurrentLanguage == "en" ? "active" : "")" @onclick="@(() => SetLang("en"))" title="English">
+        EN
+    </button>
+    <button type="button" class="lang-btn @(DocData.CurrentLanguage == "es" ? "active" : "")" @onclick="@(() => SetLang("es"))" title="Español">
+        ES
+    </button>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        DocData.OnLanguageChanged += HandleLangChanged;
+    }
+
+    private void SetLang(string lang)
+    {
+        DocData.SetLanguage(lang);
+    }
+
+    private void HandleLangChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        DocData.OnLanguageChanged -= HandleLangChanged;
+    }
+}

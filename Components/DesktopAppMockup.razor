@@ -1,0 +1,194 @@
+@inject DocumentationDataService DocData
+
+<div class="desktop-window">
+    <div class="window-header">
+        <div class="titlebar-dots">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+        </div>
+        <div class="window-title-text">
+            <span>⚡ LLM Tuner — Desktop App (Electron)</span>
+        </div>
+        <div class="window-badges">
+            <span class="pill ok">Node 22 · Electron 44</span>
+        </div>
+    </div>
+
+    <div class="desktop-body split-view">
+        <!-- Left Side Rail (Matching llmtuner desktop layout) -->
+        <aside class="left-rail">
+            <div class="brand">
+                <img src="icon.png" class="brand-mark" alt="LLM Tuner" style="width:28px;height:28px;border-radius:6px;" />
+                <div>
+                    <strong style="font-size:0.95rem;">LLM Tuner</strong>
+                    <small style="display:block;font-size:0.75rem;color:var(--muted);">@(DocData.CurrentLanguage == "es" ? "Carga tu modelo con la máxima velocidad" : "Load your model with fastest config")</small>
+                </div>
+            </div>
+
+            <ol class="steps" style="list-style:none;padding:0;margin:16px 0;display:grid;gap:8px;">
+                <li class="done" style="font-size:0.85rem;color:var(--ok);display:flex;gap:6px;align-items:center;">
+                    <span>✓</span> 1. @(DocData.CurrentLanguage == "es" ? "Motor" : "Engine")
+                </li>
+                <li class="done" style="font-size:0.85rem;color:var(--ok);display:flex;gap:6px;align-items:center;">
+                    <span>✓</span> 2. @(DocData.CurrentLanguage == "es" ? "Modelo y contexto" : "Model & Context")
+                </li>
+                <li class="active" style="font-size:0.85rem;color:var(--accent);font-weight:600;display:flex;gap:6px;align-items:center;">
+                    <span>▶</span> 3. @(DocData.CurrentLanguage == "es" ? "Carga & Benchmark" : "Load & Benchmark")
+                </li>
+            </ol>
+
+            <div class="hw-mini panel" style="padding:10px;font-size:0.75rem;background:var(--bg);border-radius:6px;border:1px solid var(--line);">
+                <div style="font-weight:600;color:var(--accent);margin-bottom:4px;">💻 Hardware Detected</div>
+                <div style="color:var(--muted);">CPU: Ryzen 7 5800X (16T)</div>
+                <div style="color:var(--muted);">RAM: 32 GB DDR4</div>
+                <div style="color:var(--gpu);font-weight:500;">GPU 0: RTX 5070 12GB (x16)</div>
+                <div style="color:var(--gpu);font-weight:500;">GPU 1: RTX 5070 12GB (x8)</div>
+            </div>
+
+            <div style="margin-top:auto;padding-top:12px;font-size:0.72rem;color:var(--muted);">
+                @(DocData.CurrentLanguage == "es"
+                    ? "Los presets se almacenan localmente y eliminan re-mediciones futuras."
+                    : "Presets are cached locally by hardware fingerprint to bypass re-testing.")
+            </div>
+        </aside>
+
+        <!-- Right Content Area -->
+        <main class="right-content">
+            <!-- Engine & Model Header -->
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span style="font-size:0.85rem;color:var(--muted);">@(DocData.CurrentLanguage == "es" ? "Motor:" : "Engine:")</span>
+                    <button type="button" class="btn" style="padding:4px 10px;font-size:0.8rem;background:var(--accent);color:var(--accent-ink);">LM Studio 0.4.25</button>
+                    <button type="button" class="btn" style="padding:4px 10px;font-size:0.8rem;background:transparent;border:1px solid var(--line);color:var(--muted);">Ollama</button>
+                </div>
+                <div style="display:flex;gap:6px;">
+                    <span class="pill ok">Preset Applied</span>
+                    <span class="pill" style="color:var(--accent);border-color:var(--accent);">Profile: @selectedProfile.ToUpper()</span>
+                </div>
+            </div>
+
+            <!-- Model & Context Selector simulation -->
+            <div class="panel" style="padding:12px;margin-bottom:14px;background:var(--bg);border-radius:6px;border:1px solid var(--line);">
+                <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;">
+                    <div>
+                        <span style="font-size:0.75rem;text-transform:uppercase;color:var(--muted);display:block;">Model</span>
+                        <strong style="font-size:0.95rem;font-family:var(--mono);">qwen/qwen2.5-coder-32b (Q4_K_M)</strong>
+                    </div>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <span style="font-size:0.8rem;color:var(--muted);">Context:</span>
+                        @foreach (var c in new[] { 4096, 8192, 16384, 32768 })
+                        {
+                            <button type="button" class="chip @(selectedCtx == c ? "active" : "")" 
+                                    style="padding:3px 8px;font-size:0.75rem;border-radius:4px;cursor:pointer;background:@(selectedCtx == c ? "var(--accent)" : "transparent");color:@(selectedCtx == c ? "var(--accent-ink)" : "var(--ink)");border:1px solid var(--line);"
+                                    @onclick="@(() => selectedCtx = c)">
+                                @(c / 1024)K
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <span style="font-size:0.8rem;color:var(--muted);">@(DocData.CurrentLanguage == "es" ? "Perfil:" : "Profile:")</span>
+                    <button type="button" class="btn" style="padding:3px 9px;font-size:0.75rem;border-radius:4px;background:@(selectedProfile == "speed" ? "var(--accent)" : "transparent");border:1px solid var(--line);color:@(selectedProfile == "speed" ? "var(--accent-ink)" : "var(--ink)");" @onclick="@(() => selectedProfile = "speed")">
+                        Speed
+                    </button>
+                    <button type="button" class="btn" style="padding:3px 9px;font-size:0.75rem;border-radius:4px;background:@(selectedProfile == "balanced" ? "var(--accent)" : "transparent");border:1px solid var(--line);color:@(selectedProfile == "balanced" ? "var(--accent-ink)" : "var(--ink)");" @onclick="@(() => selectedProfile = "balanced")">
+                        Balanced (Recommended)
+                    </button>
+                    <button type="button" class="btn" style="padding:3px 9px;font-size:0.75rem;border-radius:4px;background:@(selectedProfile == "quality" ? "var(--accent)" : "transparent");border:1px solid var(--line);color:@(selectedProfile == "quality" ? "var(--accent-ink)" : "var(--ink)");" @onclick="@(() => selectedProfile = "quality")">
+                        Quality
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Benchmark Results Table -->
+            <div style="margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <strong style="font-size:0.88rem;">📊 @(DocData.CurrentLanguage == "es" ? "Resultados de Medición en Vivo" : "Live Tuning Measurements")</strong>
+                    <span class="status-ok small" style="font-size:0.78rem;">✓ 3 candidates evaluated</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="benchmark-table" style="width:100%;border-collapse:collapse;font-size:0.8rem;font-family:var(--mono);">
+                        <thead>
+                            <tr style="background:var(--code-bg);border-bottom:1px solid var(--line);text-align:left;">
+                                <th style="padding:6px;">Configuration</th>
+                                <th style="padding:6px;">GPU Layers</th>
+                                <th style="padding:6px;">Estimated</th>
+                                <th style="padding:6px;">Short</th>
+                                <th style="padding:6px;">Deep Context</th>
+                                <th style="padding:6px;">CPU</th>
+                                <th style="padding:6px;">Peak VRAM</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid var(--line);">
+                                <td style="padding:6px;">KV f16 (fp16)</td>
+                                <td style="padding:6px;color:var(--ok);">64 / 64 (100%)</td>
+                                <td style="padding:6px;">22.1 t/s</td>
+                                <td style="padding:6px;">23.4 t/s</td>
+                                <td style="padding:6px;">21.4 t/s</td>
+                                <td style="padding:6px;color:var(--muted);">4%</td>
+                                <td style="padding:6px;">21.8 GB</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--line);background:rgba(0, 229, 255, 0.08);">
+                                <td style="padding:6px;font-weight:600;color:var(--accent);">
+                                    KV q8_0 (8-bit) <span class="pill ok" style="padding:1px 5px;font-size:0.65rem;">WINNER</span>
+                                </td>
+                                <td style="padding:6px;color:var(--ok);font-weight:600;">64 / 64 (100%)</td>
+                                <td style="padding:6px;">26.5 t/s</td>
+                                <td style="padding:6px;">27.2 t/s</td>
+                                <td style="padding:6px;color:var(--ok);font-weight:600;">26.8 t/s</td>
+                                <td style="padding:6px;color:var(--muted);">3%</td>
+                                <td style="padding:6px;">19.4 GB</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--line);">
+                                <td style="padding:6px;">KV q4_0 (4-bit)</td>
+                                <td style="padding:6px;color:var(--ok);">64 / 64 (100%)</td>
+                                <td style="padding:6px;">27.0 t/s</td>
+                                <td style="padding:6px;">28.1 t/s</td>
+                                <td style="padding:6px;">27.3 t/s</td>
+                                <td style="padding:6px;color:var(--muted);">3%</td>
+                                <td style="padding:6px;">18.1 GB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Built-in Connection Chat Tester -->
+            <div class="panel" style="padding:12px;background:var(--code-bg);border-radius:6px;border:1px solid var(--line);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <div>
+                        <strong style="font-size:0.85rem;">💬 @(DocData.CurrentLanguage == "es" ? "Probador de Conexión en Vivo" : "Live Connection Test")</strong>
+                        <small style="display:block;font-size:0.72rem;color:var(--muted);">@(DocData.CurrentLanguage == "es" ? "Verifica tokens por segundo reales comunicándote con el servidor cargado" : "Send prompt to verify actual response rate")</small>
+                    </div>
+                    <span class="pill ok">Connected (127.0.0.1:1234)</span>
+                </div>
+
+                <div style="background:var(--surface);border-radius:6px;padding:10px;border:1px solid var(--line);margin-bottom:8px;font-size:0.8rem;">
+                    <div style="margin-bottom:6px;color:var(--muted);">
+                        <strong style="color:var(--accent);">User:</strong> Write a fast Fibonacci in Python with memoization
+                    </div>
+                    <div style="color:var(--ink);font-family:var(--mono);line-height:1.4;">
+                        <span style="color:var(--accent);">Assistant:</span>
+                        <pre style="margin:4px 0;padding:6px;background:var(--bg);border-radius:4px;font-size:0.75rem;">from functools import cache
+
+@@cache
+def fib(n: int) -> int:
+    return n if n &lt; 2 else fib(n - 1) + fib(n - 2)</pre>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;font-size:0.72rem;">
+                            <span class="status-ok">✓ Generated 48 tokens in 1.79s</span>
+                            <span class="pill ok">26.8 tokens/sec</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+@code {
+    private int selectedCtx = 16384;
+    private string selectedProfile = "balanced";
+}

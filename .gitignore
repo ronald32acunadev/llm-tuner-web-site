@@ -1,0 +1,21 @@
+## .NET build artifacts
+bin/
+obj/
+dist/
+
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## IDEs
+.vscode/
+.idea/
+*.swp
+*~
+
+## OS generated
+.DS_Store
+Thumbs.db
