@@ -1,0 +1,105 @@
+@page "/commands"
+@inject DocumentationDataService DocData
+@implements IDisposable
+
+<PageTitle>@(DocData.CurrentLanguage == "es" ? "Comandos y Parámetros — LLM Tuner" : "Commands & Reference — LLM Tuner")</PageTitle>
+
+<div class="page-container" style="max-width:1150px;margin:0 auto;padding:40px 24px 80px;">
+    <header class="section-header" style="margin-bottom:28px;">
+        <h1 style="font-size:2rem;font-weight:700;color:var(--color-text-strong);letter-spacing:-0.02em;margin-bottom:8px;">
+            @(DocData.CurrentLanguage == "es" ? "Generador y Catálogo de Comandos" : "Command Builder & Reference")
+        </h1>
+        <p style="color:var(--color-text-weak);font-size:1rem;margin:0;">
+            @(DocData.CurrentLanguage == "es"
+                ? "Genera tu comando personalizado o consulta todas las banderas disponibles en el paquete llm-tuner."
+                : "Generate custom flags or inspect the complete parameter catalog.")
+        </p>
+    </header>
+
+    <!-- Interactive Command Builder -->
+    <CommandBuilder />
+
+    <!-- Command Filter Chips & Table -->
+    <div class="panel" style="margin-top:32px;">
+        <header style="flex-wrap:wrap;gap:12px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <i class="las la-clipboard-list" style="font-size:1.4rem;color:var(--color-accent);"></i>
+                <h3 style="font-size:1.1rem;font-weight:600;color:var(--color-text-strong);margin:0;">
+                    @(DocData.CurrentLanguage == "es" ? "Catálogo de Banderas" : "Parameter Catalog")
+                </h3>
+            </div>
+
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                @foreach (var cat in commandCategories)
+                {
+                    <button type="button" class="chip @(selectedCategory == cat ? "active" : "")"
+                            style="padding:4px 10px;font-size:0.75rem;border-radius:4px;border:1px solid var(--color-border-weak);background:@(selectedCategory == cat ? "var(--color-text-strong)" : "transparent");color:@(selectedCategory == cat ? "var(--color-text-inverted)" : "var(--color-text)");cursor:pointer;"
+                            @onclick="@(() => selectedCategory = cat)">
+                        @cat
+                    </button>
+                }
+            </div>
+        </header>
+
+        <div style="overflow-x:auto;margin-top:16px;">
+            <table style="width:100%;border-collapse:collapse;font-size:0.85rem;font-family:var(--font-mono);">
+                <thead>
+                    <tr style="border-bottom:1px solid var(--color-border-weak);background:var(--color-background);text-align:left;">
+                        <th style="padding:10px 12px;">Flag</th>
+                        <th style="padding:10px 12px;">Category</th>
+                        <th style="padding:10px 12px;">Default</th>
+                        <th style="padding:10px 12px;font-family:var(--font-sans);">Description</th>
+                        <th style="padding:10px 12px;">Quick Copy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cmd in FilteredCommands)
+                    {
+                        <tr style="border-bottom:1px solid var(--color-border-weak);">
+                            <td style="padding:10px 12px;color:var(--color-accent);font-weight:600;">
+                                @cmd.Flag
+                            </td>
+                            <td style="padding:10px 12px;">
+                                <span class="pill">@cmd.Category</span>
+                            </td>
+                            <td style="padding:10px 12px;color:var(--color-text-weak);">
+                                @cmd.DefaultValue
+                            </td>
+                            <td style="padding:10px 12px;font-family:var(--font-sans);line-height:1.4;color:var(--color-text);">
+                                @cmd.Description
+                            </td>
+                            <td style="padding:10px 12px;">
+                                <CopyButton Text="@cmd.Example" Label="@(DocData.CurrentLanguage == "es" ? "Ejemplo" : "Example")" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string selectedCategory = "All";
+    private readonly List<string> commandCategories = new() { "All", "Engine", "Model", "Configuration", "Optimization", "Execution", "Automation", "Presets", "Output", "Settings", "General" };
+
+    private IEnumerable<CliCommand> FilteredCommands =>
+        selectedCategory == "All"
+            ? DocData.GetCommands()
+            : DocData.GetCommands().Where(c => c.Category.Equals(selectedCategory, StringComparison.OrdinalIgnoreCase));
+
+    protected override void OnInitialized()
+    {
+        DocData.OnLanguageChanged += HandleLangChanged;
+    }
+
+    private void HandleLangChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        DocData.OnLanguageChanged -= HandleLangChanged;
+    }
+}

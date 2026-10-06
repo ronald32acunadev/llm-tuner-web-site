@@ -1,0 +1,92 @@
+@page "/profiles"
+@inject DocumentationDataService DocData
+@implements IDisposable
+
+<PageTitle>@(DocData.CurrentLanguage == "es" ? "Perfiles de Carga — LLM Tuner" : "Load Profiles — LLM Tuner")</PageTitle>
+
+<div class="page-container" style="max-width:1150px;margin:0 auto;padding:40px 24px 80px;">
+    <header class="section-header" style="margin-bottom:28px;">
+        <h1 style="font-size:2rem;font-weight:700;color:var(--color-text-strong);letter-spacing:-0.02em;margin-bottom:8px;">
+            @(DocData.CurrentLanguage == "es" ? "Perfiles de Carga & Optimización" : "Load Profiles & Optimization")
+        </h1>
+        <p style="color:var(--color-text-weak);font-size:1rem;margin:0;">
+            @(DocData.CurrentLanguage == "es" 
+                ? "Más tokens por segundo no siempre significa mejores respuestas. Elige el balance exacto entre throughput y fidelidad." 
+                : "More tokens per second does not always mean better answers. Choose your exact trade-off between throughput and answer quality.")
+        </p>
+    </header>
+
+    <!-- Profiles Summary Cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:20px;margin-bottom:32px;">
+        <div class="panel" style="padding:20px;background:var(--color-background-weak);border:1px solid var(--color-border-weak);border-radius:8px;display:flex;align-items:flex-start;gap:16px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:rgba(0,229,255,0.12);display:flex;align-items:center;justify-content:center;color:var(--color-accent);font-size:1.4rem;flex-shrink:0;">
+                <i class="las la-bolt"></i>
+            </div>
+            <div>
+                <h3 style="font-size:1rem;font-weight:600;color:var(--color-text-strong);margin-bottom:4px;">
+                    Speed (Máximo TPS)
+                </h3>
+                <p style="font-size:0.85rem;color:var(--color-text-weak);line-height:1.45;margin:0;">
+                    @(DocData.CurrentLanguage == "es" 
+                        ? "Cuantización agresiva de KV (q4_0) para exprimir la máxima tasa de generación en GPUs con VRAM ajustada." 
+                        : "Aggressive KV quantization (q4_0) prioritizing max generation rate under constrained VRAM.")
+                </p>
+            </div>
+        </div>
+
+        <div class="panel" style="padding:20px;background:var(--color-background-weak);border:1px solid var(--color-accent);border-radius:8px;display:flex;align-items:flex-start;gap:16px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:rgba(52,211,153,0.12);display:flex;align-items:center;justify-content:center;color:var(--color-success);font-size:1.4rem;flex-shrink:0;">
+                <i class="las la-balance-scale"></i>
+            </div>
+            <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                    <h3 style="font-size:1rem;font-weight:600;color:var(--color-accent);margin:0;">
+                        Balanced (Default)
+                    </h3>
+                    <span class="pill ok" style="font-size:0.65rem;">Recommended</span>
+                </div>
+                <p style="font-size:0.85rem;color:var(--color-text-weak);line-height:1.45;margin:0;">
+                    @(DocData.CurrentLanguage == "es" 
+                        ? "Equilibrio ideal con KV cache en q8_0: preserva la coherencia del contexto sin sacrificar velocidad perceptible." 
+                        : "Optimal balance using q8_0 KV cache: maintains long-context coherence without noticeable speed penalties.")
+                </p>
+            </div>
+        </div>
+
+        <div class="panel" style="padding:20px;background:var(--color-background-weak);border:1px solid var(--color-border-weak);border-radius:8px;display:flex;align-items:flex-start;gap:16px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:rgba(251,191,36,0.12);display:flex;align-items:center;justify-content:center;color:var(--color-warning);font-size:1.4rem;flex-shrink:0;">
+                <i class="las la-award"></i>
+            </div>
+            <div>
+                <h3 style="font-size:1rem;font-weight:600;color:var(--color-text-strong);margin-bottom:4px;">
+                    Quality (Fidelidad Total)
+                </h3>
+                <p style="font-size:0.85rem;color:var(--color-text-weak);line-height:1.45;margin:0;">
+                    @(DocData.CurrentLanguage == "es" 
+                        ? "Caché KV en f16/q8 sin pérdidas numéricas. Crucial para tareas de programación, matemáticas y razonamiento crítico." 
+                        : "Unquantized f16 KV cache with zero numerical degradation for coding and complex math reasoning.")
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparative Table Component -->
+    <ProfileComparator />
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        DocData.OnLanguageChanged += HandleLangChanged;
+    }
+
+    private void HandleLangChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        DocData.OnLanguageChanged -= HandleLangChanged;
+    }
+}

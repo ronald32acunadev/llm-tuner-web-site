@@ -1,0 +1,126 @@
+@page "/architecture"
+@inject DocumentationDataService DocData
+@implements IDisposable
+
+<PageTitle>@(DocData.CurrentLanguage == "es" ? "Arquitectura y Presets — LLM Tuner" : "Architecture & Presets — LLM Tuner")</PageTitle>
+
+<div class="page-container" style="max-width:1150px;margin:0 auto;padding:40px 24px 80px;">
+    <header class="section-header" style="margin-bottom:32px;">
+        <h1 style="font-size:2rem;font-weight:700;color:var(--color-text-strong);letter-spacing:-0.02em;margin-bottom:8px;">
+            @(DocData.CurrentLanguage == "es" ? "Arquitectura del Sistema y Persistencia" : "System Architecture & Persistence")
+        </h1>
+        <p style="color:var(--color-text-weak);font-size:1rem;margin:0;">
+            @(DocData.CurrentLanguage == "es" 
+                ? "Diseño determinista sin modelos probabilísticos en la toma de decisiones y almacenamiento estructurado de presets por SO."
+                : "Deterministic design with zero AI hallucination in tuning decisions and standard OS preset persistence.")
+        </p>
+    </header>
+
+    <!-- OS Storage Locations Panel -->
+    <div class="panel" style="margin-bottom:36px;">
+        <header style="display:flex;align-items:center;gap:10px;">
+            <i class="las la-folder-open" style="font-size:1.4rem;color:var(--color-accent);"></i>
+            <div>
+                <h3 style="font-size:1.15rem;font-weight:600;color:var(--color-text-strong);margin:0 0 4px;">
+                    @(DocData.CurrentLanguage == "es" ? "Rutas de Almacenamiento de Presets" : "Preset Storage Locations")
+                </h3>
+                <p style="color:var(--color-text-weak);font-size:0.85rem;margin:0;">
+                    @(DocData.CurrentLanguage == "es"
+                        ? "Los presets generados son persistidos en directorios estándar según el sistema operativo, permitiendo cargas instantáneas."
+                        : "Presets are saved to standard OS configuration directories for instant load times.")
+                </p>
+            </div>
+        </header>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px;margin-top:20px;font-family:var(--font-mono);font-size:0.85rem;">
+            <div style="background:var(--color-background);border:1px solid var(--color-border-weak);padding:16px;border-radius:6px;display:flex;flex-direction:column;gap:8px;">
+                <span style="color:var(--color-text-strong);font-weight:600;display:inline-flex;align-items:center;gap:8px;">
+                    <i class="lab la-linux" style="font-size:1.3rem;color:var(--color-accent);"></i> Linux
+                </span>
+                <code style="color:var(--color-accent);word-break:break-all;">~/.config/llm-tuner/presets/</code>
+            </div>
+
+            <div style="background:var(--color-background);border:1px solid var(--color-border-weak);padding:16px;border-radius:6px;display:flex;flex-direction:column;gap:8px;">
+                <span style="color:var(--color-text-strong);font-weight:600;display:inline-flex;align-items:center;gap:8px;">
+                    <i class="lab la-apple" style="font-size:1.3rem;color:var(--color-accent);"></i> macOS
+                </span>
+                <code style="color:var(--color-accent);word-break:break-all;">~/Library/Application Support/llm-tuner/presets/</code>
+            </div>
+
+            <div style="background:var(--color-background);border:1px solid var(--color-border-weak);padding:16px;border-radius:6px;display:flex;flex-direction:column;gap:8px;">
+                <span style="color:var(--color-text-strong);font-weight:600;display:inline-flex;align-items:center;gap:8px;">
+                    <i class="lab la-windows" style="font-size:1.3rem;color:var(--color-accent);"></i> Windows
+                </span>
+                <code style="color:var(--color-accent);word-break:break-all;">%APPDATA%\llm-tuner\presets\</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Architectural Pillars -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:20px;">
+        <div class="panel" style="padding:24px;background:var(--color-background-weak);border:1px solid var(--color-border-weak);border-radius:8px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:6px;background:var(--color-accent-dim);display:flex;align-items:center;justify-content:center;color:var(--color-accent);font-size:1.2rem;">
+                    <i class="las la-microchip"></i>
+                </div>
+                <h3 style="font-size:1.05rem;font-weight:600;color:var(--color-text-strong);margin:0;">
+                    @(DocData.CurrentLanguage == "es" ? "Cálculo GGUF y VRAM" : "GGUF & VRAM Accounting")
+                </h3>
+            </div>
+            <p style="color:var(--color-text);font-size:0.88rem;line-height:1.5;margin:0;">
+                @(DocData.CurrentLanguage == "es"
+                    ? "Lee los encabezados GGUF sin cargar pesos para calcular el tamaño exacto por capa de tensores y la memoria necesaria para el contexto KV."
+                    : "Parses GGUF headers without loading model weights to calculate exact layer tensor sizes and KV context allocation.")
+            </p>
+        </div>
+
+        <div class="panel" style="padding:24px;background:var(--color-background-weak);border:1px solid var(--color-border-weak);border-radius:8px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:6px;background:var(--color-accent-dim);display:flex;align-items:center;justify-content:center;color:var(--color-accent);font-size:1.2rem;">
+                    <i class="las la-network-wired"></i>
+                </div>
+                <h3 style="font-size:1.05rem;font-weight:600;color:var(--color-text-strong);margin:0;">
+                    @(DocData.CurrentLanguage == "es" ? "Detección PCIe y Dual GPU" : "PCIe Topology & Multi-GPU")
+                </h3>
+            </div>
+            <p style="color:var(--color-text);font-size:0.88rem;line-height:1.5;margin:0;">
+                @(DocData.CurrentLanguage == "es"
+                    ? "Consulta el árbol de buses PCIe y la presencia de monitores activos para priorizar la GPU secundaria y maximizar el ancho de banda."
+                    : "Probes PCIe bus trees and display attachments to route heavy tensor offloads to the widest bus lanes.")
+            </p>
+        </div>
+
+        <div class="panel" style="padding:24px;background:var(--color-background-weak);border:1px solid var(--color-border-weak);border-radius:8px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:6px;background:var(--color-accent-dim);display:flex;align-items:center;justify-content:center;color:var(--color-accent);font-size:1.2rem;">
+                    <i class="las la-fingerprint"></i>
+                </div>
+                <h3 style="font-size:1.05rem;font-weight:600;color:var(--color-text-strong);margin:0;">
+                    @(DocData.CurrentLanguage == "es" ? "Fingerprint de Hardware" : "Hardware Fingerprinting")
+                </h3>
+            </div>
+            <p style="color:var(--color-text);font-size:0.88rem;line-height:1.5;margin:0;">
+                @(DocData.CurrentLanguage == "es"
+                    ? "Genera una firma SHA criptográfica basada en CPU, GPUs y RAM disponible, garantizando que los presets se apliquen con total fidelidad."
+                    : "Builds a cryptographic SHA signature based on CPU, GPUs, and available RAM, ensuring cache hits load in under 20 seconds.")
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        DocData.OnLanguageChanged += HandleLangChanged;
+    }
+
+    private void HandleLangChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        DocData.OnLanguageChanged -= HandleLangChanged;
+    }
+}

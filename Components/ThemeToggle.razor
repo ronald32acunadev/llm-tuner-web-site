@@ -3,11 +3,11 @@
 
 <div class="theme-switcher">
     <button type="button" class="theme-btn @(Theme.CurrentTheme == "dark" ? "active" : "")" @onclick="@(() => SetTheme("dark"))" title="Dark theme">
-        <span>🌙</span>
+        <i class="las la-moon"></i>
         <span class="btn-text">Dark</span>
     </button>
     <button type="button" class="theme-btn @(Theme.CurrentTheme == "light" ? "active" : "")" @onclick="@(() => SetTheme("light"))" title="Light theme">
-        <span>☀️</span>
+        <i class="las la-sun"></i>
         <span class="btn-text">Light</span>
     </button>
 </div>
