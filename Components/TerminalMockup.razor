@@ -1,102 +1,179 @@
 @inject DocumentationDataService DocData
 @inject ClipboardService Clipboard
 
-<div class="terminal-window">
-    <div class="titlebar">
-        <div class="titlebar-dots">
-            <div class="dot red"></div>
-            <div class="dot yellow"></div>
-            <div class="dot green"></div>
+<div class="terminal-showcase">
+    <!-- Step Navigation Pills -->
+    <div class="step-nav" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+        @for (int i = 0; i < cliTabs.Length; i++)
+        {
+            var idx = i;
+            var tab = cliTabs[idx];
+            var isCurrent = currentTabIndex == idx;
+            <button type="button" 
+                    class="btn @(isCurrent ? "primary" : "")" 
+                    style="display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:0.85rem;border-radius:6px;@(isCurrent ? "box-shadow:0 0 12px rgba(0,229,255,0.25);" : "")"
+                    @onclick="@(() => currentTabIndex = idx)">
+                <span style="font-weight:700;opacity:@(isCurrent ? "1" : "0.7");">@(idx + 1).</span>
+                <span>@(DocData.CurrentLanguage == "es" ? tab.TitleEs : tab.TitleEn)</span>
+            </button>
+        }
+    </div>
+
+    <!-- Terminal Window Frame with Real Screenshot -->
+    <div class="terminal-window" style="box-shadow:0 12px 32px rgba(0,0,0,0.5);border:1px solid var(--color-border-weak);border-radius:8px;overflow:hidden;background:#090e15;">
+        <div class="titlebar" style="background:#0b111a;padding:12px 18px;border-bottom:1px solid var(--color-border-weak);display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:14px;">
+                <div class="titlebar-dots" style="display:flex;gap:6px;">
+                    <div class="dot red" style="width:11px;height:11px;border-radius:50%;background:#ff5f56;"></div>
+                    <div class="dot yellow" style="width:11px;height:11px;border-radius:50%;background:#ffbd2e;"></div>
+                    <div class="dot green" style="width:11px;height:11px;border-radius:50%;background:#27c93f;"></div>
+                </div>
+                <span style="font-family:var(--font-mono);font-size:0.85rem;color:var(--color-text-strong);font-weight:500;">
+                    bash — ~/projects/llmtuner · @(DocData.CurrentLanguage == "es" ? "Captura Real de Terminal" : "Real Terminal Execution")
+                </span>
+            </div>
+
+            <div style="display:flex;gap:10px;align-items:center;">
+                <CopyButton Text="@CurrentTab.Command" Label="@(DocData.CurrentLanguage == "es" ? "Copiar Comando" : "Copy Command")" />
+                <span class="pill" style="padding:3px 10px;font-size:0.75rem;border-radius:4px;background:rgba(0,229,255,0.12);color:var(--color-accent);border:1px solid rgba(0,229,255,0.3);font-family:var(--font-mono);">
+                    @(currentTabIndex + 1) / @cliTabs.Length
+                </span>
+            </div>
         </div>
-        <div class="terminal-title">bash — ~/projects/llmtuner</div>
-        <div class="terminal-tab-group">
-            <button type="button" class="term-tab @(activeTab == "wizard" ? "active" : "")" @onclick="@(() => activeTab = "wizard")">
-                1. @(DocData.CurrentLanguage == "es" ? "Asistente Interactivo" : "Interactive Wizard")
-            </button>
-            <button type="button" class="term-tab @(activeTab == "headless" ? "active" : "")" @onclick="@(() => activeTab = "headless")">
-                2. @(DocData.CurrentLanguage == "es" ? "CLI Headless" : "Headless CLI")
-            </button>
-            <button type="button" class="term-tab @(activeTab == "settings" ? "active" : "")" @onclick="@(() => activeTab = "settings")">
-                3. @(DocData.CurrentLanguage == "es" ? "Configuración" : "Settings Menu")
-            </button>
-            <button type="button" class="term-tab @(activeTab == "presets" ? "active" : "")" @onclick="@(() => activeTab = "presets")">
-                4. @(DocData.CurrentLanguage == "es" ? "Presets" : "Presets Cache")
-            </button>
+
+        <!-- High-Resolution Real Screenshot View -->
+        <div style="position:relative;background:#090e15;text-align:center;">
+            <a href="@CurrentTab.ImageUrl" target="_blank" title="@(DocData.CurrentLanguage == "es" ? "Haz clic para ver captura en tamaño completo" : "Click to view full-size capture")">
+                <img src="@CurrentTab.ImageUrl" 
+                     alt="@(DocData.CurrentLanguage == "es" ? CurrentTab.TitleEs : CurrentTab.TitleEn)" 
+                     style="width:100%;height:auto;display:block;max-height:680px;object-fit:contain;cursor:zoom-in;transition:opacity 0.2s ease;" />
+            </a>
         </div>
-        <div class="terminal-actions">
-            <CopyButton Text="@GetActiveCommand()" Label="@(DocData.CurrentLanguage == "es" ? "Copiar" : "Copy")" />
+
+        <!-- Tab Description & Controls Bar -->
+        <div style="background:#0b111a;padding:16px 20px;border-top:1px solid var(--color-border-weak);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+            <div style="max-width:750px;">
+                <div style="font-weight:600;font-size:0.95rem;color:var(--color-text-strong);margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+                    <span style="color:var(--color-accent);">$ @CurrentTab.Command</span>
+                </div>
+                <p style="margin:0;font-size:0.85rem;color:var(--color-text-weak);line-height:1.45;">
+                    @(DocData.CurrentLanguage == "es" ? CurrentTab.DescriptionEs : CurrentTab.DescriptionEn)
+                </p>
+            </div>
+
+            <!-- Controls -->
+            <div style="display:flex;gap:10px;">
+                <button type="button" 
+                        class="btn" 
+                        style="padding:6px 14px;font-size:0.8rem;" 
+                        disabled="@(currentTabIndex == 0)"
+                        @onclick="PrevTab">
+                    ← @(DocData.CurrentLanguage == "es" ? "Anterior" : "Previous")
+                </button>
+                <button type="button" 
+                        class="btn primary" 
+                        style="padding:6px 14px;font-size:0.8rem;" 
+                        disabled="@(currentTabIndex == cliTabs.Length - 1)"
+                        @onclick="NextTab">
+                    @(DocData.CurrentLanguage == "es" ? "Siguiente" : "Next") →
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="terminal-body">
-        @if (activeTab == "wizard")
-        {
-            <div class="term-line"><span class="prompt">$</span> <span class="command">llm-tuner</span></div>
-            <div class="term-line status-ok">✓ Hardware detected: AMD Ryzen 7 5800X (16 threads) · 76.5 GB RAM</div>
-            <div class="term-line status-ok">✓ GPU 1: NVIDIA GeForce RTX 5070 12GB (PCIe 3.0 x16, 11.9 GB free) [Main]</div>
-            <div class="term-line status-ok">✓ GPU 0: NVIDIA GeForce RTX 5070 12GB (PCIe 2.0 x2, 11.9 GB free)</div>
-            <div class="term-line dim">------------------------------------------------------------</div>
-            <div class="term-line prompt">? Which engine do you want to use? › <span class="command">LM Studio (detected: 0.4.25)</span></div>
-            <div class="term-line prompt">? Choose model: › <span class="command">qwen/qwen3-coder-30b</span> (30.8B params, 48 layers MoE)</div>
-            <div class="term-line prompt">? Context length (tokens): › <span class="command">32768</span></div>
-            <div class="term-line prompt">? Select load profile: › <span class="command">balanced</span> <span class="status-ok">[Recommended: 100% fits in GPU]</span></div>
-            <div class="term-line dim">  ⚡ Estimator calculated split: 26 layers → GPU1, 22 layers → GPU0 (0 CPU offload)</div>
-            <div class="term-line status-warn">ℹ Measuring 3 candidate configurations on dual-card topology...</div>
-            <div class="term-line">  [1/3] KV q4_0 · 48 layers GPU · 32K ctx ... <span class="command">139.2 t/s</span> (Peak VRAM: 18.2 GB)</div>
-            <div class="term-line">  [2/3] KV q8_0 · 48 layers GPU · 32K ctx ... <span class="command">159.5 t/s</span> (Peak VRAM: 20.4 GB)</div>
-            <div class="term-line">  [3/3] KV f16  · 48 layers GPU · 32K ctx ... <span class="status-ok">177.1 t/s (WINNER)</span> (Peak VRAM: 24.0 GB)</div>
-            <div class="term-line status-ok">✓ Preset saved to: ~/.config/llm-tuner/presets/lmstudio__qwen_qwen3-coder-30b__32768.json</div>
-            <div class="term-line status-ok">✓ Model loaded in LM Studio successfully at 177.1 t/s. Ready for requests!</div>
-        }
-        else if (activeTab == "headless")
-        {
-            <div class="term-line"><span class="prompt">$</span> <span class="command">llm-tuner --engine lmstudio --model qwen/qwen3-coder-30b --ctx 32768 --profile balanced --yes</span>
-            </div>
-            <div class="term-line dim">[llm-tuner] Running in non-interactive mode (--yes enabled)</div>
-            <div class="term-line status-ok">[Hardware] 2x NVIDIA RTX 5070 identified. Dual-card load balancing active.</div>
-            <div class="term-line">[Preset] Hardware fingerprint match found: using cached winner configuration.</div>
-            <div class="term-line status-ok">✓ Balanced profile enforced: KV Cache f16, flash-attn on, ubatch 512.</div>
-            <div class="term-line status-ok">✓ Layer split plan: GPU1: 26 layers | GPU0: 22 layers | 0 CPU offload.</div>
-            <div class="term-line status-ok">✓ Applying hardware configuration and model preset...</div>
-            <div class="term-line status-ok">✓ Loaded: LM Studio &#64; 145.8 t/s (instant load ~15s). Zero manual intervention required.</div>
-        }
-        else if (activeTab == "settings")
-        {
-            <div class="term-line"><span class="prompt">$</span> <span class="command">llm-tuner /settings</span></div>
-            <div class="term-line">┌────────────────────────────────────────────────────────┐</div>
-            <div class="term-line">│  <span class="status-ok">LLM Tuner — User Preferences & Configuration</span>         │</div>
-            <div class="term-line">├────────────────────────────────────────────────────────┤</div>
-            <div class="term-line">│ ? Select setting to change:                            │</div>
-            <div class="term-line">│   ❯ <span class="command">Language: English (en)</span> / Español (es)              │</div>
-            <div class="term-line">│     Theme: Dark / Light / System (system)              │</div>
-            <div class="term-line">│     Exit settings                                      │</div>
-            <div class="term-line">└────────────────────────────────────────────────────────┘</div>
-            <div class="term-line status-ok">✓ Settings updated: saved to ~/.config/llm-tuner/settings.json</div>
-        }
-        else if (activeTab == "presets")
-        {
-            <div class="term-line"><span class="prompt">$</span> <span class="command">llm-tuner --presets</span></div>
-            <div class="term-line status-ok">Stored Presets Directory: ~/.config/llm-tuner/presets/</div>
-            <div class="term-line dim">ENGINE     MODEL                     CTX    PROFILE   KV     OFFLOAD  SPEED     CREATED</div>
-            <div class="term-line">lmstudio   qwen/qwen3-coder-30b      32K    balanced  f16    ALL GPU  <span class="status-ok">177.1 t/s</span>  2026-10-06 00:07</div>
-            <div class="term-line">lmstudio   qwen/qwen3-coder-30b      32K    quality   f16    ALL GPU  <span class="status-ok">110.5 t/s</span>  2026-10-05 05:36</div>
-            <div class="term-line">lmstudio   qwen/qwen3-coder-30b      32K    speed     f16    ALL GPU  <span class="status-ok">94.0 t/s</span>   2026-10-05 05:29</div>
-            <div class="term-line">lmstudio   mistralai/ministral-3-3b  8K     balanced  f16    ALL GPU  <span class="status-ok">110.3 t/s</span>  2026-10-05 05:14</div>
-            <div class="term-line">lmstudio   meta/muse-glimmer         31.2K  balanced  f16    ALL GPU  <span class="status-ok">32.5 t/s</span>   2026-10-02 02:09</div>
-            <div class="term-line status-ok">✓ 5 cached presets ready for instant loading without re-benchmarking.</div>
-        }
+    <!-- Technical Telemetry Footer -->
+    <div style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px;font-family:var(--font-mono);font-size:0.8rem;">
+        <div style="background:var(--color-surface);border:1px solid var(--color-border-weak);border-radius:6px;padding:12px 14px;">
+            <div style="color:var(--color-text-weak);font-size:0.75rem;margin-bottom:4px;">CLI BINARY</div>
+            <div style="color:var(--color-accent);font-weight:600;">bin/llm-tuner</div>
+            <div style="color:var(--color-text-weak);font-size:0.72rem;margin-top:2px;">Node 22 ESM · 0 dependencies runtime</div>
+        </div>
+
+        <div style="background:var(--color-surface);border:1px solid var(--color-border-weak);border-radius:6px;padding:12px 14px;">
+            <div style="color:var(--color-text-weak);font-size:0.75rem;margin-bottom:4px;">INTERACTIVE WIZARD</div>
+            <div style="color:var(--color-text-strong);font-weight:600;">@("@inquirer/prompts")</div>
+            <div style="color:var(--color-text-weak);font-size:0.72rem;margin-top:2px;">Searchable models & arrow navigation</div>
+        </div>
+
+        <div style="background:var(--color-surface);border:1px solid var(--color-border-weak);border-radius:6px;padding:12px 14px;">
+            <div style="color:var(--color-text-weak);font-size:0.75rem;margin-bottom:4px;">NON-INTERACTIVE AUTOMATION</div>
+            <div style="color:#27c93f;font-weight:600;">--yes / --json Flags</div>
+            <div style="color:var(--color-text-weak);font-size:0.72rem;margin-top:2px;">CI/CD & headless script execution</div>
+        </div>
+
+        <div style="background:var(--color-surface);border:1px solid var(--color-border-weak);border-radius:6px;padding:12px 14px;">
+            <div style="color:var(--color-text-weak);font-size:0.75rem;margin-bottom:4px;">PRESET RESOLUTION</div>
+            <div style="color:var(--color-accent);font-weight:600;">Instant Cache Hit</div>
+            <div style="color:#27c93f;font-size:0.72rem;margin-top:2px;">~15s load bypasses physical measurement</div>
+        </div>
     </div>
 </div>
 
 @code {
-    private string activeTab = "wizard";
+    private int currentTabIndex = 0;
 
-    private string GetActiveCommand() => activeTab switch
+    private TabInfo CurrentTab => cliTabs[currentTabIndex];
+
+    private void NextTab()
     {
-        "wizard" => "llm-tuner",
-        "headless" => "llm-tuner --engine lmstudio --model qwen/qwen3-coder-30b --ctx 32768 --profile balanced --yes",
-        "settings" => "llm-tuner /settings",
-        "presets" => "llm-tuner --presets",
-        _ => "llm-tuner"
+        if (currentTabIndex < cliTabs.Length - 1) currentTabIndex++;
+    }
+
+    private void PrevTab()
+    {
+        if (currentTabIndex > 0) currentTabIndex--;
+    }
+
+    private record TabInfo(
+        string ImageUrl,
+        string Command,
+        string TitleEs,
+        string TitleEn,
+        string DescriptionEs,
+        string DescriptionEn
+    );
+
+    private readonly TabInfo[] cliTabs = new[]
+    {
+        new TabInfo(
+            "screenshots/cli-01-wizard.png",
+            "llm-tuner",
+            "Asistente Interactivo (Wizard)",
+            "Interactive Wizard",
+            "Asistente guiado paso a paso con menús interactivos: detecta CPU, RAM y GPUs, lista motores disponibles, busca modelos descargados y calcula el contexto óptimo recomendando el perfil adecuado.",
+            "Guided step-by-step terminal wizard: inspects CPU, RAM, and GPUs, filters installed engines, searches downloaded models, and estimates maximum all-GPU context lengths."
+        ),
+        new TabInfo(
+            "screenshots/cli-02-headless.png",
+            "llm-tuner --engine lmstudio --model qwen/qwen3-coder-30b --ctx 32768 --profile balanced --yes",
+            "Modo Headless (Scripts y CI)",
+            "Headless Automation Mode",
+            "Ejecución no interactiva idónea para scripts de inicio o pipelines CI/CD. Aplica configuración directamente a LM Studio y carga Qwen3 Coder 30B con cero prompts o preguntas manuales.",
+            "Non-interactive CLI execution for startup scripts and automated pipelines. Direct configuration injection into LM Studio with zero manual interaction or prompts."
+        ),
+        new TabInfo(
+            "screenshots/cli-03-presets.png",
+            "llm-tuner --presets",
+            "Caché de Presets Locales",
+            "Presets Cache Listing",
+            "Muestra la tabla de configuraciones ganadoras guardadas en ~/.config/llm-tuner/presets/. Cada preset almacena la tasa de tokens/s, tipo de KV cache y particionado exacto por tarjeta de video.",
+            "Inspects stored winning configurations in ~/.config/llm-tuner/presets/. Lists speed, context tokens, KV cache format, and exact layer split across video cards."
+        ),
+        new TabInfo(
+            "screenshots/cli-04-settings.png",
+            "llm-tuner /settings",
+            "Menú de Configuración y Preferencias",
+            "Settings & Preferences Menu",
+            "Menú interactivo para alternar idioma de la CLI (English / Español) y tema visual (Dark / Light / System). Los cambios se persisten inmediatamente en settings.json.",
+            "Interactive preferences menu to configure CLI language (English / Spanish) and terminal color theme (Dark / Light / System). Persisted in settings.json."
+        ),
+        new TabInfo(
+            "screenshots/cli-05-help.png",
+            "llm-tuner --help",
+            "Catálogo de Banderas y Parámetros",
+            "Command Parameters & Help",
+            "Catálogo completo de banderas CLI: soporte de perfiles (speed/balanced/quality), candidatos de prueba (--candidates), ejecución seca (--dry-run), salida JSON y forzado de medición (--force).",
+            "Comprehensive flag reference: load profile goals (speed/balanced/quality), candidate count (--candidates), dry-run previews (--dry-run), and JSON outputs."
+        )
     };
 }
