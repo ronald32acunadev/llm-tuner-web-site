@@ -1,0 +1,62 @@
+@page "/showcase"
+@inject DocumentationDataService DocData
+@implements IDisposable
+
+<PageTitle>@(DocData.CurrentLanguage == "es" ? "Muestrario Visual — LLM Tuner" : "Visual Showcase — LLM Tuner")</PageTitle>
+
+<div class="page-container" style="max-width:1150px;margin:0 auto;padding:40px 24px 80px;">
+    <header class="section-header" style="margin-bottom:28px;">
+        <h1 style="font-size:2rem;font-weight:700;color:var(--color-text-strong);letter-spacing:-0.02em;margin-bottom:8px;">
+            @(DocData.CurrentLanguage == "es" ? "Muestrario Visual de Ejecuciones" : "Visual Execution Showcase")
+        </h1>
+        <p style="color:var(--color-text-weak);font-size:1rem;margin:0;">
+            @(DocData.CurrentLanguage == "es"
+                ? "Interactúa con las interfaces reales generadas por el paquete llm-tuner con telemetría en vivo sobre Dual RTX 5070."
+                : "Interact with live mockups faithful to the exact experiences on your local machine.")
+        </p>
+    </header>
+
+    <!-- Mode Selector Tabs (OpenCode style) -->
+    <div style="display:flex;gap:20px;border-bottom:1px solid var(--color-border-weak);margin-bottom:24px;">
+        <button type="button" class="install-tab-btn @(showcaseMode == "terminal" ? "active" : "")"
+                style="padding-bottom:10px;font-size:0.95rem;display:inline-flex;align-items:center;gap:8px;"
+                @onclick="@(() => showcaseMode = "terminal")">
+            <i class="las la-terminal" style="font-size:1.2rem;"></i>
+            <span>@(DocData.CurrentLanguage == "es" ? "Terminal CLI (Wizard / Headless / Presets)" : "Terminal CLI Interface")</span>
+        </button>
+        <button type="button" class="install-tab-btn @(showcaseMode == "desktop" ? "active" : "")"
+                style="padding-bottom:10px;font-size:0.95rem;display:inline-flex;align-items:center;gap:8px;"
+                @onclick="@(() => showcaseMode = "desktop")">
+            <i class="las la-desktop" style="font-size:1.2rem;"></i>
+            <span>@(DocData.CurrentLanguage == "es" ? "Aplicación Desktop (Electron)" : "Desktop Electron GUI")</span>
+        </button>
+    </div>
+
+    @if (showcaseMode == "terminal")
+    {
+        <TerminalMockup />
+    }
+    else
+    {
+        <DesktopAppMockup />
+    }
+</div>
+
+@code {
+    private string showcaseMode = "desktop";
+
+    protected override void OnInitialized()
+    {
+        DocData.OnLanguageChanged += HandleLangChanged;
+    }
+
+    private void HandleLangChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        DocData.OnLanguageChanged -= HandleLangChanged;
+    }
+}

@@ -1,4 +1,5 @@
 @page "/"
+@page "/overview"
 @inject DocumentationDataService DocData
 @implements IDisposable
 
@@ -127,221 +128,44 @@
             </div>
         </section>
 
-        <!-- SECTION 3: WHAT IS LLM TUNER (Retro-technical feature list with [*] bullets) -->
-        <section id="what" class="what-section">
-            <div class="what-title">
-                <h3>@(DocData.CurrentLanguage == "es" ? "¿Qué es LLM Tuner?" : "What is LLM Tuner?")</h3>
-                <p>
-                    @(DocData.CurrentLanguage == "es"
-                        ? "Un afinador de rendimiento que elimina el cuello de botella de CPU y encuentra la partición ideal de capas en tu hardware."
-                        : "A deterministic tuning agent that removes CPU bottlenecks and identifies the exact layer split for your hardware.")
-                </p>
+        <!-- SECTION 3: EXPLORATION CARDS -->
+        <section class="quick-exploration">
+            <div style="margin-bottom:24px;text-align:center;">
+                <span style="font-family:var(--font-mono);font-size:0.8rem;text-transform:uppercase;color:var(--color-text-weak);letter-spacing:0.05em;">
+                    @(DocData.CurrentLanguage == "es" ? "VISTAS Y MÓDULOS DE DOCUMENTACIÓN" : "DOCUMENTATION MODULES & VIEWS")
+                </span>
             </div>
 
-            <ul class="what-list">
-                <li>
-                    <span class="bullet">[*]</span>
-                    <div>
-                        <strong>@(DocData.CurrentLanguage == "es" ? "100% Determinista" : "100% Deterministic")</strong>
-                        @(DocData.CurrentLanguage == "es"
-                            ? "Ninguna IA decide la configuración. Fórmulas exactas sobre metadatos GGUF y mediciones físicas reales."
-                            : "No LLM decides configuration. Pure GGUF tensor math, VRAM formulas, and real physical tests.")
-                    </div>
-                </li>
-                <li>
-                    <span class="bullet">[*]</span>
-                    <div>
-                        <strong>@(DocData.CurrentLanguage == "es" ? "Soporte Multi-GPU Inteligente" : "Multi-GPU Topology")</strong>
-                        @(DocData.CurrentLanguage == "es"
-                            ? "Prioriza tarjetas con mayor ancho de banda PCIe y sin monitor conectado, balanceando VRAM restante."
-                            : "Prioritizes cards with widest PCIe links and no display attached, balancing leftover headroom.")
-                    </div>
-                </li>
-                <li>
-                    <span class="bullet">[*]</span>
-                    <div>
-                        <strong>@(DocData.CurrentLanguage == "es" ? "Presets sin Medición Redundante" : "Cached Hardware Presets")</strong>
-                        @(DocData.CurrentLanguage == "es"
-                            ? "Guarda la configuración ganadora por huella de hardware. Cargas posteriores toman ~20s sin re-medir."
-                            : "Stores winners by hardware fingerprint. Future model loads take ~20s directly with zero delay.")
-                    </div>
-                </li>
-                <li>
-                    <span class="bullet">[*]</span>
-                    <div>
-                        <strong>@(DocData.CurrentLanguage == "es" ? "LM Studio & Ollama" : "LM Studio & Ollama")</strong>
-                        @(DocData.CurrentLanguage == "es"
-                            ? "Detección automática e instalación oficial (winget, brew o script) si el motor no se encuentra."
-                            : "Auto-detection plus official installer routines (winget, Homebrew, curl scripts) if missing.")
-                    </div>
-                </li>
-                <li>
-                    <span class="bullet">[*]</span>
-                    <div>
-                        <strong>@(DocData.CurrentLanguage == "es" ? "Perfiles de Carga" : "Load Profiles")</strong>
-                        @(DocData.CurrentLanguage == "es"
-                            ? "Elige entre Speed (máximo t/s), Balanced (equilibrio tps/KV) y Quality (fidelidad f16/q8 sin pérdida)."
-                            : "Choose Speed (max TPS), Balanced (speed weighted by KV quality), or Quality (least precision loss).")
-                    </div>
-                </li>
-                <li>
-                    <span class="bullet">[*]</span>
-                    <div>
-                        <strong>@(DocData.CurrentLanguage == "es" ? "CLI & Aplicación Desktop" : "Any Interface")</strong>
-                        @(DocData.CurrentLanguage == "es"
-                            ? "Disponible como asistente de terminal interactivo, comando headless para scripts y app gráfica en Electron."
-                            : "Available as an interactive terminal wizard, scriptable headless CLI, and native Electron GUI.")
-                    </div>
-                </li>
-            </ul>
-        </section>
+            <div class="exploration-grid">
+                <a href="what" class="exploration-card">
+                    <i class="las la-question-circle"></i>
+                    <h3>@(DocData.CurrentLanguage == "es" ? "¿Qué es?" : "What is it?")</h3>
+                    <p>@(DocData.CurrentLanguage == "es" ? "Pilares técnicos y fórmulas deterministas" : "Technical pillars & deterministic formulas")</p>
+                </a>
 
-        <!-- SECTION 4: VISUAL SHOWCASE (Terminal & Desktop) -->
-        <section id="showcase" style="padding:48px 0;border-top:1px solid var(--color-border-weak);">
-            <div style="margin-bottom:28px;">
-                <h3 style="font-size:1.75rem;font-weight:600;color:var(--color-text-strong);letter-spacing:-0.02em;margin-bottom:8px;">
-                    @(DocData.CurrentLanguage == "es" ? "Muestrario Visual de Ejecuciones" : "Visual Execution Showcase")
-                </h3>
-                <p style="color:var(--color-text-weak);font-size:1rem;">
-                    @(DocData.CurrentLanguage == "es"
-                        ? "Interactúa con las interfaces reales generadas por el paquete de npm."
-                        : "Interact with live mockups faithful to the exact experiences on your local machine.")
-                </p>
-            </div>
+                <a href="showcase" class="exploration-card">
+                    <i class="las la-laptop-code"></i>
+                    <h3>@(DocData.CurrentLanguage == "es" ? "Muestrario Visual" : "Showcase")</h3>
+                    <p>@(DocData.CurrentLanguage == "es" ? "Capturas reales CLI y app Desktop en vivo" : "Live terminal & Desktop GUI captures")</p>
+                </a>
 
-            <!-- Mode Selector Tabs (OpenCode style) -->
-            <div style="display:flex;gap:20px;border-bottom:1px solid var(--color-border-weak);margin-bottom:24px;">
-                <button type="button" class="install-tab-btn @(showcaseMode == "terminal" ? "active" : "")"
-                        style="padding-bottom:10px;font-size:0.95rem;"
-                        @onclick="@(() => showcaseMode = "terminal")">
-                    💻 @(DocData.CurrentLanguage == "es" ? "Terminal CLI (Wizard / Headless / Presets)" : "Terminal CLI Interface")
-                </button>
-                <button type="button" class="install-tab-btn @(showcaseMode == "desktop" ? "active" : "")"
-                        style="padding-bottom:10px;font-size:0.95rem;"
-                        @onclick="@(() => showcaseMode = "desktop")">
-                    🖥️ @(DocData.CurrentLanguage == "es" ? "Aplicación Desktop (Electron)" : "Desktop Electron GUI")
-                </button>
-            </div>
+                <a href="commands" class="exploration-card">
+                    <i class="las la-terminal"></i>
+                    <h3>@(DocData.CurrentLanguage == "es" ? "Comandos" : "Commands")</h3>
+                    <p>@(DocData.CurrentLanguage == "es" ? "Generador interactivo y catálogo de flags" : "Interactive builder & parameter catalog")</p>
+                </a>
 
-            @if (showcaseMode == "terminal")
-            {
-                <TerminalMockup />
-            }
-            else
-            {
-                <DesktopAppMockup />
-            }
-        </section>
+                <a href="profiles" class="exploration-card">
+                    <i class="las la-sliders-h"></i>
+                    <h3>@(DocData.CurrentLanguage == "es" ? "Perfiles" : "Profiles")</h3>
+                    <p>@(DocData.CurrentLanguage == "es" ? "Speed vs Balanced vs Quality trade-offs" : "Speed vs Balanced vs Quality trade-offs")</p>
+                </a>
 
-        <!-- SECTION 5: COMMAND BUILDER & CATALOG -->
-        <section id="commands" style="padding:48px 0;border-top:1px solid var(--color-border-weak);">
-            <div style="margin-bottom:28px;">
-                <h3 style="font-size:1.75rem;font-weight:600;color:var(--color-text-strong);letter-spacing:-0.02em;margin-bottom:8px;">
-                    @(DocData.CurrentLanguage == "es" ? "Generador y Catálogo de Comandos" : "Command Builder & Reference")
-                </h3>
-                <p style="color:var(--color-text-weak);font-size:1rem;">
-                    @(DocData.CurrentLanguage == "es"
-                        ? "Genera tu comando personalizado o consulta todas las banderas disponibles en el paquete."
-                        : "Generate custom flags or inspect the complete parameter catalog.")
-                </p>
-            </div>
-
-            <CommandBuilder />
-
-            <!-- Command Filter Chips & Table -->
-            <div class="panel" style="margin-top:28px;">
-                <header style="flex-wrap:wrap;gap:12px;">
-                    <div>
-                        <h4 style="font-size:1.05rem;font-weight:600;color:var(--color-text-strong);margin-bottom:4px;">
-                            📋 @(DocData.CurrentLanguage == "es" ? "Catálogo de Banderas" : "Parameter Catalog")
-                        </h4>
-                    </div>
-
-                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                        @foreach (var cat in commandCategories)
-                        {
-                            <button type="button" class="chip @(selectedCategory == cat ? "active" : "")"
-                                    style="padding:4px 10px;font-size:0.75rem;border-radius:4px;border:1px solid var(--color-border-weak);background:@(selectedCategory == cat ? "var(--color-text-strong)" : "transparent");color:@(selectedCategory == cat ? "var(--color-text-inverted)" : "var(--color-text)");cursor:pointer;"
-                                    @onclick="@(() => selectedCategory = cat)">
-                                @cat
-                            </button>
-                        }
-                    </div>
-                </header>
-
-                <div style="overflow-x:auto;margin-top:16px;">
-                    <table style="width:100%;border-collapse:collapse;font-size:0.85rem;font-family:var(--font-mono);">
-                        <thead>
-                            <tr style="border-bottom:1px solid var(--color-border-weak);background:var(--color-background);text-align:left;">
-                                <th style="padding:10px 12px;">Flag</th>
-                                <th style="padding:10px 12px;">Category</th>
-                                <th style="padding:10px 12px;">Default</th>
-                                <th style="padding:10px 12px;font-family:var(--font-sans);">Description</th>
-                                <th style="padding:10px 12px;">Quick Copy</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var cmd in FilteredCommands)
-                            {
-                                <tr style="border-bottom:1px solid var(--color-border-weak);">
-                                    <td style="padding:10px 12px;color:var(--color-accent);font-weight:600;">
-                                        @cmd.Flag
-                                    </td>
-                                    <td style="padding:10px 12px;">
-                                        <span class="pill">@cmd.Category</span>
-                                    </td>
-                                    <td style="padding:10px 12px;color:var(--color-text-weak);">
-                                        @cmd.DefaultValue
-                                    </td>
-                                    <td style="padding:10px 12px;font-family:var(--font-sans);line-height:1.4;color:var(--color-text);">
-                                        @cmd.Description
-                                    </td>
-                                    <td style="padding:10px 12px;">
-                                        <CopyButton Text="@cmd.Example" Label="@(DocData.CurrentLanguage == "es" ? "Ejemplo" : "Example")" />
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 6: LOAD PROFILES -->
-        <section id="profiles" style="padding:48px 0;border-top:1px solid var(--color-border-weak);">
-            <ProfileComparator />
-        </section>
-
-        <!-- SECTION 7: ARCHITECTURE & PATHS -->
-        <section id="architecture" style="padding:48px 0 64px;border-top:1px solid var(--color-border-weak);">
-            <div class="panel">
-                <header>
-                    <div>
-                        <h4 style="font-size:1.15rem;font-weight:600;color:var(--color-text-strong);margin-bottom:4px;">
-                            📁 @(DocData.CurrentLanguage == "es" ? "Rutas de Almacenamiento de Presets" : "Preset Storage Locations")
-                        </h4>
-                        <p style="color:var(--color-text-weak);font-size:0.85rem;margin:0;">
-                            @(DocData.CurrentLanguage == "es"
-                                ? "Los presets generados son persistidos en directorios estándar según el sistema operativo."
-                                : "Presets are saved to standard OS configuration directories.")
-                        </p>
-                    </div>
-                </header>
-
-                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px;margin-top:16px;font-family:var(--font-mono);font-size:0.82rem;">
-                    <div style="background:var(--color-background);border:1px solid var(--color-border-weak);padding:12px;border-radius:4px;">
-                        <span style="color:var(--color-text-strong);display:block;margin-bottom:4px;">🐧 Linux</span>
-                        <code style="color:var(--color-accent);">~/.config/llm-tuner/presets/</code>
-                    </div>
-                    <div style="background:var(--color-background);border:1px solid var(--color-border-weak);padding:12px;border-radius:4px;">
-                        <span style="color:var(--color-text-strong);display:block;margin-bottom:4px;">🍎 macOS</span>
-                        <code style="color:var(--color-accent);">~/Library/Application Support/llm-tuner/presets/</code>
-                    </div>
-                    <div style="background:var(--color-background);border:1px solid var(--color-border-weak);padding:12px;border-radius:4px;">
-                        <span style="color:var(--color-text-strong);display:block;margin-bottom:4px;">🪟 Windows</span>
-                        <code style="color:var(--color-accent);">%APPDATA%\llm-tuner\presets\</code>
-                    </div>
-                </div>
+                <a href="architecture" class="exploration-card">
+                    <i class="las la-sitemap"></i>
+                    <h3>@(DocData.CurrentLanguage == "es" ? "Arquitectura" : "Architecture")</h3>
+                    <p>@(DocData.CurrentLanguage == "es" ? "Rutas por SO y fingerprinting de hardware" : "OS storage paths & hardware fingerprinting")</p>
+                </a>
             </div>
         </section>
     </div>
@@ -349,9 +173,6 @@
 
 @code {
     private string installTab = "npm";
-    private string showcaseMode = "terminal";
-    private string selectedCategory = "All";
-    private readonly List<string> commandCategories = new() { "All", "Engine", "Model", "Configuration", "Optimization", "Execution", "Automation", "Presets", "Output", "Settings", "General" };
 
     private string GetInstallCommand() => installTab switch
     {
@@ -360,11 +181,6 @@
         "git" => "git clone https://github.com/ronald32acunadev/llmtuner.git && cd llmtuner && npm install",
         _ => "npm install -g llm-tuner"
     };
-
-    private IEnumerable<CliCommand> FilteredCommands =>
-        selectedCategory == "All"
-            ? DocData.GetCommands()
-            : DocData.GetCommands().Where(c => c.Category.Equals(selectedCategory, StringComparison.OrdinalIgnoreCase));
 
     protected override void OnInitialized()
     {

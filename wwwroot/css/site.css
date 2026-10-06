@@ -17,8 +17,8 @@
   --bad: #f87171;
   --code-bg: #0b121b;
 
-  --font-sans: 'IBM Plex Sans', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'Ubuntu', 'IBM Plex Sans', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Ubuntu Mono', 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
 
   /* Color system aliases */
   --color-background: var(--bg);
@@ -100,11 +100,33 @@ code, pre, .mono {
 }
 
 .navbar .nav-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  position: relative;
+  padding: 8px 0;
   transition: color 0.15s ease;
 }
 
 .navbar .nav-links a:hover {
   color: var(--accent);
+}
+
+.navbar .nav-links a.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.navbar .nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--accent);
 }
 
 .cta-button {
@@ -551,6 +573,77 @@ code, pre, .mono {
   background: var(--surface-hover);
   color: var(--accent);
   font-weight: 600;
+}
+
+/* ICONS8 LINE AWESOME GLOBAL ADJUSTMENTS */
+.las, .lab, .lar {
+  font-size: 1.15em;
+  vertical-align: -0.1em;
+  line-height: 1;
+}
+
+/* QUICK EXPLORATION GRID & CARDS */
+.quick-exploration {
+  padding: 48px 0 24px;
+  border-top: 1px solid var(--color-border-weak);
+}
+
+.exploration-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+.exploration-card {
+  background: var(--color-background-weak);
+  border: 1px solid var(--color-border-weak);
+  border-radius: 8px;
+  padding: 22px 18px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.exploration-card:hover {
+  border-color: var(--color-accent);
+  background: var(--color-background-weak-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 229, 255, 0.12);
+  color: var(--color-text-strong);
+}
+
+.exploration-card i {
+  font-size: 2.2rem;
+  color: var(--color-accent);
+}
+
+.exploration-card h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text-strong);
+}
+
+.exploration-card p {
+  font-size: 0.78rem;
+  color: var(--color-text-weak);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.pillar-card {
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pillar-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-accent);
+  box-shadow: 0 6px 20px rgba(0, 229, 255, 0.08);
 }
 
 /* RESPONSIVE */

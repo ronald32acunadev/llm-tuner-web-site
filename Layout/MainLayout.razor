@@ -5,27 +5,46 @@
 <div class="app-shell" data-page="opencode">
     <header class="navbar">
         <div style="display:flex;align-items:center;gap:12px;">
-            <a href="#overview" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;">
+            <NavLink href="" Match="NavLinkMatch.All" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;">
                 <img src="icon.png" alt="LLM Tuner" style="width:28px;height:28px;border-radius:6px;" />
                 <span style="font-weight:600;font-size:1.1rem;letter-spacing:-0.02em;color:var(--color-text-strong);font-family:var(--font-mono);">llm-tuner</span>
-            </a>
+            </NavLink>
             <span class="pill" style="font-size:0.7rem;">v0.1.0</span>
         </div>
 
         <nav class="nav-links">
-            <a href="#overview">@(DocData.CurrentLanguage == "es" ? "Inicio" : "Overview")</a>
-            <a href="#what">@(DocData.CurrentLanguage == "es" ? "¿Qué es?" : "What is it?")</a>
-            <a href="#showcase">@(DocData.CurrentLanguage == "es" ? "Muestrario" : "Showcase")</a>
-            <a href="#commands">@(DocData.CurrentLanguage == "es" ? "Comandos" : "Commands")</a>
-            <a href="#profiles">@(DocData.CurrentLanguage == "es" ? "Perfiles" : "Profiles")</a>
-            <a href="#architecture">@(DocData.CurrentLanguage == "es" ? "Arquitectura" : "Architecture")</a>
+            <NavLink href="" Match="NavLinkMatch.All">
+                <i class="las la-home"></i>
+                <span>@(DocData.CurrentLanguage == "es" ? "Inicio" : "Overview")</span>
+            </NavLink>
+            <NavLink href="what" Match="NavLinkMatch.Prefix">
+                <i class="las la-question-circle"></i>
+                <span>@(DocData.CurrentLanguage == "es" ? "¿Qué es?" : "What is it?")</span>
+            </NavLink>
+            <NavLink href="showcase" Match="NavLinkMatch.Prefix">
+                <i class="las la-laptop-code"></i>
+                <span>@(DocData.CurrentLanguage == "es" ? "Muestrario" : "Showcase")</span>
+            </NavLink>
+            <NavLink href="commands" Match="NavLinkMatch.Prefix">
+                <i class="las la-terminal"></i>
+                <span>@(DocData.CurrentLanguage == "es" ? "Comandos" : "Commands")</span>
+            </NavLink>
+            <NavLink href="profiles" Match="NavLinkMatch.Prefix">
+                <i class="las la-sliders-h"></i>
+                <span>@(DocData.CurrentLanguage == "es" ? "Perfiles" : "Profiles")</span>
+            </NavLink>
+            <NavLink href="architecture" Match="NavLinkMatch.Prefix">
+                <i class="las la-sitemap"></i>
+                <span>@(DocData.CurrentLanguage == "es" ? "Arquitectura" : "Architecture")</span>
+            </NavLink>
         </nav>
 
         <div style="display:flex;align-items:center;gap:12px;">
             <LanguageToggle />
             <a href="https://github.com/ronald32acunadev/llmtuner" target="_blank" rel="noopener noreferrer" class="cta-button">
+                <i class="lab la-github"></i>
                 <span>GitHub</span>
-                <span style="font-size:0.8rem;">↗</span>
+                <i class="las la-external-link-alt" style="font-size:0.75rem;"></i>
             </a>
         </div>
     </header>
@@ -41,12 +60,16 @@
                 <span style="color:var(--color-text-strong);font-weight:600;">LLM Tuner</span>
                 <span>— Open Source MIT</span>
             </div>
-            <div>
-                <span>@(DocData.CurrentLanguage == "es" ? "Diseñado con Blazor WebAssembly (.NET 10)" : "Built with Blazor WebAssembly (.NET 10)")</span>
-            </div>
-            <div style="display:flex;gap:20px;">
-                <a href="https://github.com/ronald32acunadev/llmtuner" target="_blank" rel="noopener">GitHub</a>
-                <a href="https://www.npmjs.com/package/llm-tuner" target="_blank" rel="noopener">npm package</a>
+            <div style="display:flex;gap:20px;align-items:center;">
+                <a href="https://github.com/ronald32acunadev/llmtuner" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;">
+                    <i class="lab la-github"></i> GitHub
+                </a>
+                <a href="https://www.npmjs.com/package/llm-tuner" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;">
+                    <i class="lab la-npm"></i> npm package
+                </a>
+                <a href="https://icons8.com" target="_blank" rel="noopener" title="Icons by Icons8" style="display:inline-flex;align-items:center;gap:4px;opacity:0.8;">
+                    <i class="las la-icons"></i> Icons8
+                </a>
             </div>
         </div>
     </footer>
