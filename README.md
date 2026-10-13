@@ -1,41 +1,131 @@
 # LLM Tuner — Documentation & Showcase Web App
 
-Official informational website and documentation portal for the [`llm-tuner`](https://github.com/ronald32acunadev/llmtuner) npm package, built with **Blazor WebAssembly** on **.NET 10**.
+[![Live Web](https://img.shields.io/badge/Firebase-Hosting-FFCA28?logo=firebase&logoColor=black)](https://llm-tuner-b9184.web.app)
+[![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Blazor WebAssembly](https://img.shields.io/badge/Blazor-WebAssembly-512BD4?logo=blazor&logoColor=white)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-## Features
+[English](README.md) · [Español](README.es.md)
 
-- **Brand Design System**: Inherits the exact color palette, dark/light theme tokens, and typography (`IBM Plex Sans` & `IBM Plex Mono`) from the core `llmtuner` project.
+Official documentation website and interactive visual portal for the [`llm-tuner`](https://github.com/ronald32acunadev/llmtuner) npm package, built with **Blazor WebAssembly** on **.NET 10** and deployed to **Firebase Hosting**.
+
+---
+
+## Overview
+
+The web app serves as the central hub for the `llm-tuner` ecosystem. It demonstrates how `llm-tuner` mathematically models GPU VRAM, benchmarks candidate KV cache quantizations, and configures local LLM runtimes (LM Studio and Ollama) with zero guesswork.
+
+The portal provides interactive simulations of the CLI and Desktop interfaces, an interactive command builder, an exhaustive parameter reference, profile comparison matrices, and system architecture breakdowns.
+
+---
+
+## Key Features
+
+- **Independent Routed Views**: Dedicated pages for each core area (`/`, `/what`, `/showcase`, `/commands`, `/profiles`, `/architecture`).
 - **Interactive Visual Showcase**:
-  - **Terminal Wizard (`llm-tuner`)**: Interactive terminal mockup with tabs for the step-by-step wizard, headless one-liner, settings menu (`/settings`), and cached presets inspection (`--presets`).
-  - **Desktop App (`llm-tuner-desktop`)**: Full Electron GUI mockup featuring hardware telemetry rail, context chips, live benchmark progress table, and real-time chat connection tester.
-- **Interactive Command Builder**: Configure engine, model, context tokens, load profiles, and flags with immediate CLI syntax preview and 1-click clipboard copy.
-- **Complete CLI Reference**: Categorized, searchable table of all supported flags (`--engine`, `--model`, `--ctx`, `--profile`, `--force`, `--candidates`, `--yes`, `--dry-run`, `--presets`, `--json`, `--lang`, `--theme`, `/settings`, `--help`).
-- **Load Profiles Deep Dive**: Interactive matrix comparing `speed`, `balanced`, and `quality` objectives, KV cache constraints, and variant selection strategies.
-- **Bilingual (EN / ES)**: Toggle seamlessly between English and Spanish documentation in real time.
-- **Theme Switcher**: Dark, Light, and System preferences stored locally in the browser.
+  - **Terminal CLI Mockup (`TerminalMockup.razor`)**: Step-by-step interactive tabs for the guided wizard (`llm-tuner`), headless one-liner execution, saved presets inspection (`--presets`), interactive settings drawer (`/settings`), and help manual (`--help`).
+  - **Desktop App Mockup (`DesktopAppMockup.razor`)**: Full Electron GUI showcase featuring hardware telemetry (Dual RTX 5070), model selection, real-time benchmark progress, and live token generation tester.
+- **Interactive Command Builder (`CommandBuilder.razor`)**: Visual configurator for engine, model, context size, load profile, and execution flags with instant syntax preview and one-click clipboard copying.
+- **Complete CLI Reference**: Structured documentation covering all supported arguments (`--engine`, `--model`, `--ctx`, `--profile`, `--force`, `--candidates`, `--yes`, `--dry-run`, `--presets`, `--json`, `--lang`, `--theme`, `/settings`, `--help`).
+- **Load Profiles Breakdown**: Side-by-side comparison matrix for `speed`, `balanced`, and `quality` tuning profiles, detailing KV cache quantization targets (`f16`, `q8_0`, `q4_0`) and selection criteria.
+- **Architecture & System Persistence**: Clear diagrams explaining GGUF tensor inspection, multi-GPU allocation by PCIe bandwidth, RAM offloading for MoE models, and standard OS preset persistence directories.
+- **Brand Design System**: Tailored theme engine (Dark, Light, System) styled with Ubuntu and Ubuntu Mono typography and Icons8 Line Awesome icons.
+- **Bilingual Documentation (EN / ES)**: Real-time bilingual toggle without page reload via `DocumentationDataService`.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Framework** | [Blazor WebAssembly](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) (.NET 10.0) |
+| **Packages** | `Microsoft.AspNetCore.Components.WebAssembly` (10.0.12) |
+| **Hosting** | [Firebase Hosting](https://firebase.google.com/products/hosting) (`llm-tuner-b9184`) |
+| **Styling** | Custom CSS design tokens with Dark/Light theme switching |
+| **Typography** | Ubuntu & Ubuntu Mono |
+| **Iconography** | Icons8 Line Awesome |
+
+---
+
+## Project Structure
+
+```
+llm-tuner-web-site/
+├── Pages/
+│   ├── Home.razor           # Hero section, quick install tabs, and performance telemetry
+│   ├── WhatIsIt.razor       # Problem statement, philosophy, and comparison vs guessing
+│   ├── Showcase.razor       # Interactive Terminal and Desktop GUI mockup switcher
+│   ├── Commands.razor       # Interactive command builder and CLI argument reference
+│   ├── Profiles.razor       # Detailed breakdown of speed, balanced, and quality profiles
+│   ├── Architecture.razor   # Memory modeling, multi-GPU split, MoE offloading, and preset paths
+│   └── NotFound.razor       # 404 handler
+├── Components/
+│   ├── CommandBuilder.razor # Live interactive CLI command generator
+│   ├── TerminalMockup.razor # Tabbed terminal showcase with high-res captures
+│   ├── DesktopAppMockup.razor# Tabbed Electron GUI showcase with high-res captures
+│   ├── ProfileComparator.razor# Matrix comparing profile constraints and KV cache types
+│   ├── CopyButton.razor     # One-click clipboard copy button
+│   ├── LanguageToggle.razor # English / Spanish switcher
+│   └── ThemeToggle.razor    # Dark / Light / System theme selector
+├── Layout/
+│   └── MainLayout.razor     # Navigation bar, mobile layout, and footer
+├── Services/
+│   ├── DocumentationDataService.cs # Bilingual data store and state event bus
+│   ├── ThemeService.cs      # LocalStorage-backed theme coordinator
+│   └── ClipboardService.cs  # JavaScript clipboard interop
+├── wwwroot/
+│   ├── css/site.css         # Global design tokens and component styling
+│   ├── screenshots/         # High-resolution captures for terminal and desktop mockups
+│   └── index.html           # SPA host shell and font imports
+├── firebase.json            # Firebase Hosting configuration and SPA rewrites
+└── llm-tuner-web-site.csproj# .NET 10 Blazor project specification
+```
+
+---
 
 ## Getting Started
 
 ### Prerequisites
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (v10.0.100 or later)
+- [Firebase CLI](https://firebase.google.com/docs/cli) (optional, for deployment)
 
-### Run Locally
+### Local Development
+
+Run the development server with hot reload:
 
 ```bash
 dotnet watch
 ```
 
-Then navigate to `http://localhost:5000` or the URL provided by the development server.
+Open your browser and navigate to `http://localhost:5000` (or the port specified in terminal output).
 
-### Build and Publish
+### Building for Production
+
+Compile and publish the static WebAssembly bundle:
 
 ```bash
-dotnet publish -c Release -o dist
+dotnet publish -c Release
 ```
 
-The resulting files in `dist/wwwroot` are static web assets ready to be deployed to GitHub Pages, Cloudflare Pages, Netlify, Vercel, or any static web host.
+The compiled static assets are generated in `bin/Release/net10.0/publish/wwwroot/`.
+
+### Deployment to Firebase Hosting
+
+Ensure you have authenticated with Firebase and deploy:
+
+```bash
+firebase deploy --only hosting
+```
+
+---
+
+## Related Projects
+
+- **[llmtuner](https://github.com/ronald32acunadev/llmtuner)** — Core npm package: CLI wizard, headless engine, hardware estimator, and Electron desktop GUI.
+
+---
 
 ## License
 
-MIT © Ronald Acuña
+[MIT](LICENSE) © Ronald Daniel Acuña Arias

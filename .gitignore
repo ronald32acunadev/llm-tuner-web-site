@@ -22,3 +22,8 @@ Thumbs.db
 
 ## Firebase
 .firebase/
+
+## Tool caches
+.atl/
+.codegraph/
+
