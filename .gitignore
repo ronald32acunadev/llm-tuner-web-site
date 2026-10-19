@@ -13,6 +13,7 @@ dist/
 ## IDEs
 .vscode/
 .idea/
+.vs/
 *.swp
 *~
 
@@ -27,3 +28,6 @@ Thumbs.db
 .atl/
 .codegraph/
 
+
+## Claude Code local settings
+.claude/settings.local.json

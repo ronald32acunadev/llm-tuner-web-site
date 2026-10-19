@@ -90,9 +90,9 @@
         </div>
 
         <div style="background:var(--color-surface);border:1px solid var(--color-border-weak);border-radius:6px;padding:12px 14px;">
-            <div style="color:var(--color-text-weak);font-size:0.75rem;margin-bottom:4px;">INTERACTIVE WIZARD</div>
+            <div style="color:var(--color-text-weak);font-size:0.75rem;margin-bottom:4px;">INTERACTIVE MENU</div>
             <div style="color:var(--color-text-strong);font-weight:600;">@("@inquirer/prompts")</div>
-            <div style="color:var(--color-text-weak);font-size:0.72rem;margin-top:2px;">Searchable models & arrow navigation</div>
+            <div style="color:var(--color-text-weak);font-size:0.72rem;margin-top:2px;">Slash commands & Backspace navigation</div>
         </div>
 
         <div style="background:var(--color-surface);border:1px solid var(--color-border-weak);border-radius:6px;padding:12px 14px;">
@@ -136,10 +136,18 @@
     private readonly TabInfo[] cliTabs = new[]
     {
         new TabInfo(
-            "screenshots/cli-01-wizard.png",
+            "screenshots/cli-01-menu.png",
             "llm-tuner",
-            "Asistente Interactivo (Wizard)",
-            "Interactive Wizard",
+            "Menú de Slash Commands",
+            "Slash Command Menu",
+            "Sin argumentos, llm-tuner abre un menú persistente con /load, /mcp, /presets, /settings, /help y /exit. Cada comando también se puede ejecutar directamente, por ejemplo llm-tuner /load.",
+            "Without arguments, llm-tuner opens a persistent menu with /load, /mcp, /presets, /settings, /help, and /exit. Every command can also be run directly, for example llm-tuner /load."
+        ),
+        new TabInfo(
+            "screenshots/cli-01-wizard.png",
+            "llm-tuner /load",
+            "Asistente de Carga (/load)",
+            "Load Wizard (/load)",
             "Asistente guiado paso a paso con menús interactivos: detecta CPU, RAM y GPUs, lista motores disponibles, busca modelos descargados y calcula el contexto óptimo recomendando el perfil adecuado.",
             "Guided step-by-step terminal wizard: inspects CPU, RAM, and GPUs, filters installed engines, searches downloaded models, and estimates maximum all-GPU context lengths."
         ),
@@ -152,8 +160,16 @@
             "Non-interactive CLI execution for startup scripts and automated pipelines. Direct configuration injection into LM Studio with zero manual interaction or prompts."
         ),
         new TabInfo(
+            "screenshots/cli-06-mcp.png",
+            "llm-tuner /mcp",
+            "Integración MCP (/mcp)",
+            "MCP Integration (/mcp)",
+            "Elige el motor (LM Studio u Ollama), selecciona los agentes de IA detectados y nombra el servidor MCP. Backspace vuelve al paso anterior en cada pantalla.",
+            "Pick the engine (LM Studio or Ollama), select the detected AI agents, and name the MCP server. Backspace goes back one step on every screen."
+        ),
+        new TabInfo(
             "screenshots/cli-03-presets.png",
-            "llm-tuner --presets",
+            "llm-tuner /presets",
             "Caché de Presets Locales",
             "Presets Cache Listing",
             "Muestra la tabla de configuraciones ganadoras guardadas en ~/.config/llm-tuner/presets/. Cada preset almacena la tasa de tokens/s, tipo de KV cache y particionado exacto por tarjeta de video.",
@@ -172,8 +188,8 @@
             "llm-tuner --help",
             "Catálogo de Banderas y Parámetros",
             "Command Parameters & Help",
-            "Catálogo completo de banderas CLI: soporte de perfiles (speed/balanced/quality), candidatos de prueba (--candidates), ejecución seca (--dry-run), salida JSON y forzado de medición (--force).",
-            "Comprehensive flag reference: load profile goals (speed/balanced/quality), candidate count (--candidates), dry-run previews (--dry-run), and JSON outputs."
+            "Lista de slash commands y catálogo completo de banderas CLI: soporte de perfiles (speed/balanced/quality), candidatos de prueba (--candidates), ejecución seca (--dry-run), salida JSON y forzado de medición (--force).",
+            "Slash command list and comprehensive flag reference: load profile goals (speed/balanced/quality), candidate count (--candidates), dry-run previews (--dry-run), and JSON outputs."
         )
     };
 }

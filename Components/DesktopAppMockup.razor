@@ -139,8 +139,8 @@
             "screenshots/01-engine-selection.png",
             "Detección de Hardware y Selección de Motor",
             "Hardware Detection & Engine Selection",
-            "Identificación física en milisegundos de CPU (Ryzen 7 5800X), memoria RAM (76.5 GB) y topología multi-GPU (2x RTX 5070 12GB). Se recomienda automáticamente LM Studio por su capacidad nativa de particionar capas en múltiples GPUs.",
-            "Instant hardware inspection identifying CPU (Ryzen 7 5800X), RAM (76.5 GB), and multi-GPU topology (2x RTX 5070 12GB). LM Studio is automatically recommended for native multi-GPU layer distribution."
+            "Identificación física en milisegundos de CPU (Ryzen 7 5800X), memoria RAM (76.5 GB) y topología multi-GPU (2x RTX 5070 12GB). Se recomienda automáticamente LM Studio por su capacidad nativa de particionar capas en múltiples GPUs, y cada motor instalado ofrece el botón \"Agregar como MCP\".",
+            "Instant hardware inspection identifying CPU (Ryzen 7 5800X), RAM (76.5 GB), and multi-GPU topology (2x RTX 5070 12GB). LM Studio is automatically recommended for native multi-GPU layer distribution, and every installed engine offers an \"Add as MCP\" button."
         ),
         new StepInfo(
             "screenshots/02-model-selection.png",
@@ -169,6 +169,13 @@
             "User Preferences & Settings Drawer",
             "Panel deslizable nativo para cambiar idioma (Español / Inglés) y modo visual (Dark / Light / System). Los ajustes persisten en ~/.config/llm-tuner/settings.json.",
             "Native flyout drawer for language switching (English / Spanish) and visual theme (Dark / Light / System). Stored in ~/.config/llm-tuner/settings.json."
+        ),
+        new StepInfo(
+            "screenshots/06-mcp-modal.png",
+            "Agregar Motor como Servidor MCP",
+            "Add Engine as MCP Server",
+            "Modal para registrar LM Studio u Ollama como servidor MCP: nombre personalizado, URL y API key opcionales, y selección de agentes (Claude Desktop, Claude Code, OpenCode, Antigravity, VS Code, ChatGPT / Codex) marcando cuáles están detectados o ya configurados.",
+            "Modal to register LM Studio or Ollama as an MCP server: custom name, optional base URL and API key, and agent selection (Claude Desktop, Claude Code, OpenCode, Antigravity, VS Code, ChatGPT / Codex) showing which are detected or already configured."
         )
     };
 }

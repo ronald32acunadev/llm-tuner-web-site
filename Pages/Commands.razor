@@ -81,7 +81,7 @@
 
 @code {
     private string selectedCategory = "All";
-    private readonly List<string> commandCategories = new() { "All", "Engine", "Model", "Configuration", "Optimization", "Execution", "Automation", "Presets", "Output", "Settings", "General" };
+    private readonly List<string> commandCategories = new() { "All", "Commands", "Engine", "Model", "Configuration", "Optimization", "Execution", "Automation", "Presets", "Output", "Settings", "General" };
 
     private IEnumerable<CliCommand> FilteredCommands =>
         selectedCategory == "All"

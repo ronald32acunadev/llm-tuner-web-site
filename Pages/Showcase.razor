@@ -22,7 +22,7 @@
                 style="padding-bottom:10px;font-size:0.95rem;display:inline-flex;align-items:center;gap:8px;"
                 @onclick="@(() => showcaseMode = "terminal")">
             <i class="las la-terminal" style="font-size:1.2rem;"></i>
-            <span>@(DocData.CurrentLanguage == "es" ? "Terminal CLI (Wizard / Headless / Presets)" : "Terminal CLI Interface")</span>
+            <span>@(DocData.CurrentLanguage == "es" ? "Terminal CLI (Menú / MCP / Headless / Presets)" : "Terminal CLI Interface")</span>
         </button>
         <button type="button" class="install-tab-btn @(showcaseMode == "desktop" ? "active" : "")"
                 style="padding-bottom:10px;font-size:0.95rem;display:inline-flex;align-items:center;gap:8px;"

@@ -11,10 +11,11 @@
   --accent-ink: #05111d;
   --accent-dim: rgba(0, 229, 255, 0.12);
   --gpu: #00e5ff;
+  --purple: #9a00ff;
   --cpu: #3d4f63;
-  --ok: #34d399;
+  --ok: #65ff00;
   --warn: #fbbf24;
-  --bad: #f87171;
+  --bad: #ff1a00;
   --code-bg: #0b121b;
 
   --font-sans: 'Ubuntu', 'IBM Plex Sans', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -34,6 +35,7 @@
   --color-border-weak: var(--line-weak);
   --color-accent: var(--accent);
   --color-accent-dim: var(--accent-dim);
+  --color-purple: var(--purple);
   --color-success: var(--ok);
   --color-warning: var(--warn);
   --color-danger: var(--bad);

@@ -25,6 +25,38 @@ public class DocumentationDataService
         {
             new()
             {
+                Flag = "/load",
+                Category = "Commands",
+                DefaultValue = "Interactive menu",
+                Description = isEs ? "Sintoniza y carga un modelo con la configuración óptima para tu hardware. Es el comando por defecto cuando pasas banderas de sintonización." : "Tunes and loads a model with optimal hardware settings. It is the default command when tuning flags are passed.",
+                Example = "llm-tuner /load"
+            },
+            new()
+            {
+                Flag = "/mcp",
+                Category = "Commands",
+                DefaultValue = "Interactive",
+                Description = isEs ? "Conecta tu motor local (LM Studio u Ollama) como servidor MCP en Claude Desktop, Claude Code, OpenCode, Antigravity, VS Code y ChatGPT / Codex. Acepta --engine y --name para saltar pasos." : "Connects your local engine (LM Studio or Ollama) as an MCP server to Claude Desktop, Claude Code, OpenCode, Antigravity, VS Code, and ChatGPT / Codex. Accepts --engine and --name to skip steps.",
+                Example = "llm-tuner /mcp --engine lmstudio --name pumbastudio"
+            },
+            new()
+            {
+                Flag = "/presets",
+                Category = "Commands",
+                DefaultValue = "Interactive",
+                Description = isEs ? "Lista los presets guardados (equivalente a --presets)." : "Lists saved presets (same as --presets).",
+                Example = "llm-tuner /presets"
+            },
+            new()
+            {
+                Flag = "/help · /exit",
+                Category = "Commands",
+                DefaultValue = "Interactive",
+                Description = isEs ? "/help muestra la ayuda y /exit cierra el menú interactivo. Sin argumentos, llm-tuner abre un menú persistente con todos los comandos y Backspace vuelve al paso anterior." : "/help shows usage and /exit closes the interactive menu. Without arguments, llm-tuner opens a persistent menu with every command, and Backspace goes back one step.",
+                Example = "llm-tuner /help"
+            },
+            new()
+            {
                 Flag = "--engine <lmstudio|ollama>",
                 Category = "Engine",
                 DefaultValue = "Interactive prompt",
@@ -41,11 +73,11 @@ public class DocumentationDataService
             },
             new()
             {
-                Flag = "--ctx <tokens>",
+                Flag = "--ctx <tokens|shorthand>",
                 Category = "Configuration",
-                DefaultValue = "16384",
-                Description = isEs ? "Tamaño de la ventana de contexto en tokens (ej: 4096, 8192, 16384, 32768)." : "Context window length in tokens (e.g., 4096, 8192, 16384, 32768).",
-                Example = "llm-tuner --ctx 16384"
+                DefaultValue = "16k / 16384",
+                Description = isEs ? "Tamaño de la ventana de contexto. Admite números enteros (>= 512) o sufijos abreviados como 4k, 8k, 16k, 32k o 1m." : "Context window length. Accepts token integers (>= 512) or shorthand suffixes such as 4k, 8k, 16k, 32k, or 1m.",
+                Example = "llm-tuner --ctx 16k"
             },
             new()
             {
@@ -122,7 +154,7 @@ public class DocumentationDataService
             new()
             {
                 Flag = "/settings",
-                Category = "Settings",
+                Category = "Commands",
                 DefaultValue = "Interactive",
                 Description = isEs ? "Abre el menú interactivo de configuración de idioma y tema en la terminal." : "Launches the interactive terminal settings menu for language and theme preferences.",
                 Example = "llm-tuner /settings"
@@ -134,6 +166,14 @@ public class DocumentationDataService
                 DefaultValue = "false",
                 Description = isEs ? "Muestra la ayuda completa con todas las opciones disponibles y la ruta de presets." : "Displays complete usage syntax, flags, and presets storage directory.",
                 Example = "llm-tuner --help"
+            },
+            new()
+            {
+                Flag = "--version / -v",
+                Category = "General",
+                DefaultValue = "false",
+                Description = isEs ? "Imprime la versión instalada de llm-tuner y sale (ej: 0.4.2)." : "Prints the installed version of llm-tuner and exits (e.g., 0.4.2).",
+                Example = "llm-tuner --version"
             }
         };
     }
@@ -196,10 +236,10 @@ public class DocumentationDataService
             new()
             {
                 Id = "wizard",
-                Name = isEs ? "Asistente Terminal Interactivo" : "Interactive Terminal Wizard",
+                Name = isEs ? "Menú Interactivo y Slash Commands" : "Interactive Menu & Slash Commands",
                 Description = isEs
-                    ? "Experiencia paso a paso en la consola: detecta tus motores (LM Studio/Ollama), lista modelos descargados, calcula capas GPU, sugiere perfiles de carga y mide en vivo."
-                    : "Interactive guided step-by-step CLI: detects engines, inspects GGUF layer sizes, recommends optimal load profiles, and conducts live benchmark tests.",
+                    ? "Sin argumentos abre un menú persistente con /load, /mcp, /presets, /settings, /help y /exit. Backspace vuelve al paso anterior y /load detecta motores, lista modelos por peso, calcula capas GPU y muestra la carga en vivo como en la app de escritorio."
+                    : "Without arguments it opens a persistent menu with /load, /mcp, /presets, /settings, /help, and /exit. Backspace steps back, and /load detects engines, sorts models by size, calculates GPU layers, and shows a desktop-like live loading animation.",
                 Command = "llm-tuner",
                 BinTarget = "src/cli/index.js",
                 Badge = "CLI Wizard"
@@ -209,8 +249,8 @@ public class DocumentationDataService
                 Id = "desktop",
                 Name = isEs ? "Aplicación de Escritorio (Desktop)" : "Desktop Electron App",
                 Description = isEs
-                    ? "Aplicación nativa en Electron con telemetría de hardware en tiempo real (GPU VRAM, PCIe lanes, CPU), selector visual de contexto, tabla de benchmark en vivo y probador de chat integrado."
-                    : "Native Electron GUI with real-time hardware telemetry (GPU VRAM, PCIe bandwidth, CPU), context token chips, live benchmark progress table, and built-in connection chat tester.",
+                    ? "Aplicación nativa en Electron con telemetría continua de hardware (VRAM, CPU, PCIe), barras de progreso animadas, aviso de versiones nuevas, tabla de benchmark en vivo, probador de chat integrado y botón \"Agregar como MCP\" por motor."
+                    : "Native Electron GUI with continuous hardware telemetry (VRAM, CPU, PCIe), animated progress bars, update notifications, live benchmark progress table, built-in chat tester, and an \"Add as MCP\" button per engine.",
                 Command = "llm-tuner-desktop",
                 BinTarget = "electron/launch.js",
                 Badge = "GUI App"
@@ -220,11 +260,22 @@ public class DocumentationDataService
                 Id = "direct",
                 Name = isEs ? "CLI Directo No Interactivo" : "Non-Interactive Headless CLI",
                 Description = isEs
-                    ? "Automatización pura para scripts y pipelines: pasa motor, modelo, contexto y perfil con la bandera --yes para sintonizar y cargar sin interrupciones."
-                    : "One-line automated execution for scripts and CI/CD pipelines: pass engine, model, context, and profile with --yes for seamless tuning.",
-                Command = "llm-tuner --engine lmstudio --model qwen/qwen2.5-coder-32b --ctx 16384 --profile quality --yes",
+                    ? "Automatización pura para scripts y pipelines: pasa motor, modelo, contexto (con sufijos k/m como 16k o 32k) y perfil con la bandera --yes para sintonizar y cargar sin interrupciones."
+                    : "One-line automated execution for scripts and CI/CD pipelines: pass engine, model, context shorthand (e.g. 16k, 32k), and profile with --yes for seamless tuning.",
+                Command = "llm-tuner --engine lmstudio --model qwen/qwen2.5-coder-32b --ctx 16k --profile quality --yes",
                 BinTarget = "src/cli/index.js",
                 Badge = "Automation"
+            },
+            new()
+            {
+                Id = "mcp",
+                Name = isEs ? "Integración MCP con Agentes de IA" : "AI Agent MCP Integration",
+                Description = isEs
+                    ? "Registra LM Studio u Ollama como servidor MCP en Claude Desktop, Claude Code, OpenCode, Antigravity, VS Code y ChatGPT / Codex. Detecta qué agentes están instalados, permite nombrar el servidor y edita sus configuraciones JSON o TOML de forma segura."
+                    : "Registers LM Studio or Ollama as an MCP server in Claude Desktop, Claude Code, OpenCode, Antigravity, VS Code, and ChatGPT / Codex. Detects installed agents, lets you name the server, and safely edits their JSON or TOML configs.",
+                Command = "llm-tuner /mcp",
+                BinTarget = "src/core/mcp/index.js",
+                Badge = "MCP"
             },
             new()
             {
@@ -244,7 +295,7 @@ public class DocumentationDataService
                 Description = isEs
                     ? "Inspecciona los presets almacenados en tu sistema por huella digital de hardware, motor, modelo, contexto y perfil. Permite cargas instantáneas en ~20s sin volver a medir."
                     : "Inspect cached hardware presets stored on your machine. Enables instant ~20s model loads with zero redundant benchmarking.",
-                Command = "llm-tuner --presets",
+                Command = "llm-tuner /presets",
                 BinTarget = "src/core/presets.js",
                 Badge = "Cache"
             }

@@ -47,14 +47,14 @@
         <!-- Context length -->
         <div class="form-group">
             <label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px;">
-                @(DocData.CurrentLanguage == "es" ? "Contexto (tokens):" : "Context tokens:")
+                @(DocData.CurrentLanguage == "es" ? "Contexto (--ctx):" : "Context (--ctx):")
             </label>
             <select @bind="ctx" class="form-control" style="width:100%;padding:6px 10px;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--ink);font-family:var(--mono);font-size:0.85rem;">
-                <option value="4096">4096 (4K)</option>
-                <option value="8192">8192 (8K)</option>
-                <option value="16384">16384 (16K)</option>
-                <option value="32768">32768 (32K)</option>
-                <option value="65536">65536 (64K)</option>
+                <option value="4k">4k (4,096 tokens)</option>
+                <option value="8k">8k (8,192 tokens)</option>
+                <option value="16k">16k (16,384 tokens)</option>
+                <option value="32k">32k (32,768 tokens)</option>
+                <option value="64k">64k (65,536 tokens)</option>
             </select>
         </div>
 
@@ -109,7 +109,7 @@
 @code {
     private string engine = "lmstudio";
     private string model = "qwen/qwen2.5-coder-32b";
-    private string ctx = "16384";
+    private string ctx = "16k";
     private string profile = "balanced";
     private bool yesFlag = true;
     private bool forceFlag = false;
@@ -119,6 +119,7 @@
     private readonly List<string> popularModels = new()
     {
         "qwen/qwen2.5-coder-32b",
+        "qwen/qwen3-coder-30b",
         "deepseek-r1-distill-qwen-14b",
         "llama-3.3-70b-instruct",
         "mistral:7b"
