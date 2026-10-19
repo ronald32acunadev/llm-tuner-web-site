@@ -62,7 +62,7 @@ Follow the project conventions in `CLAUDE.md`: inline `DocData.CurrentLanguage =
 node .claude/skills/sync-llmtuner/scripts/capture.mjs --llmtuner ../llmtuner --out wwwroot/screenshots
 ```
 
-The script starts the real desktop server and CLI from `../llmtuner` with an isolated `XDG_CONFIG_HOME`, so the user's settings and presets are never touched. It drives headless Chrome over CDP, using free ports for both the server and Chrome. If the server, Chrome, or a CLI run fails, the script exits non-zero and writes no CLI screenshot. Requirements: Node 22+, Chrome or Chromium (`CHROME_BIN` overrides the path), and `script` (util-linux).
+The script starts the real desktop server and CLI from `../llmtuner` with an isolated `XDG_CONFIG_HOME`, so the user's settings and presets are never touched. It drives headless Chrome over CDP, using free ports for both the server and Chrome. Screenshots are staged and copied into the output folder only when every capture succeeds, so a failed run exits non-zero and changes no screenshot. Requirements: Node 22+, Chrome or Chromium (`CHROME_BIN` overrides the path), and `script` (util-linux).
 
 It regenerates these files:
 

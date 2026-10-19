@@ -158,7 +158,6 @@ async function screenshot(cdp, file, { width, height, scale }) {
   await setViewport(cdp, width, height, scale);
   const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
   await fs.writeFile(file, Buffer.from(data, 'base64'));
-  console.log(`captured ${file}`);
 }
 
 // ---------- Terminal capture ----------
@@ -313,7 +312,10 @@ async function main() {
   let cdp;
   try {
     await fs.mkdir(path.join(tmp, 'config'), { recursive: true });
-    await fs.mkdir(out, { recursive: true });
+    // Screenshots go to a staging folder and reach `out` only after every capture succeeded,
+    // so a failed run never overwrites a committed screenshot.
+    const staging = path.join(tmp, 'shots');
+    await fs.mkdir(staging, { recursive: true });
     const serverPort = await getFreePort();
     const childEnv = {
       ...process.env,
@@ -366,7 +368,7 @@ async function main() {
     await cdp.send('Page.navigate', { url: serverUrl });
     await waitFor(cdp, "document.querySelector('.mcp-btn') !== null");
     await sleep(800);
-    await screenshot(cdp, path.join(out, '01-engine-selection.png'), desktop);
+    await screenshot(cdp, path.join(staging, '01-engine-selection.png'), desktop);
 
     await evaluate(cdp, "document.querySelector('.mcp-btn').click()");
     await waitFor(cdp, `(() => {
@@ -374,7 +376,7 @@ async function main() {
       return m && !m.hidden && document.querySelectorAll('#mcp-agents-list > *').length > 0;
     })()`);
     await sleep(800);
-    await screenshot(cdp, path.join(out, '06-mcp-modal.png'), desktop);
+    await screenshot(cdp, path.join(staging, '06-mcp-modal.png'), desktop);
 
     // CLI
     const cliCaptures = [
@@ -382,11 +384,8 @@ async function main() {
       { file: 'cli-05-help.png', args: ['--help'], expect: 'Usage: llm-tuner' },
       { file: 'cli-06-mcp.png', args: ['/mcp'], interruptAfterMs: 6000, expect: 'MCP server' },
     ];
-    // Run every CLI capture before writing any image, so one failure leaves all CLI screenshots untouched.
-    const outputs = [];
-    for (const capture of cliCaptures) outputs.push(await runTerminal(llmtuner, capture.args, childEnv, capture));
-    for (const [i, capture] of cliCaptures.entries()) {
-      const raw = outputs[i];
+    for (const capture of cliCaptures) {
+      const raw = await runTerminal(llmtuner, capture.args, childEnv, capture);
       // Show the standard Linux config path instead of the isolated temp dir.
       const html = terminalDocument(ansiToHtml(raw.replaceAll(childEnv.XDG_CONFIG_HOME, '~/.config')));
       await setViewport(cdp, 760, 400, 2);
@@ -396,7 +395,17 @@ async function main() {
       await cdp.send('Page.setDocumentContent', { frameId: frameTree.frame.id, html });
       await sleep(300);
       const height = await evaluate(cdp, "Math.ceil(document.querySelector('pre').getBoundingClientRect().height)");
-      await screenshot(cdp, path.join(out, capture.file), { width: 760, height, scale: 2 });
+      await screenshot(cdp, path.join(staging, capture.file), { width: 760, height, scale: 2 });
+    }
+
+    // Publish. Copy then rename per file: the temp dir can be on another filesystem, and the
+    // rename keeps each screenshot from ever being half-written.
+    await fs.mkdir(out, { recursive: true });
+    for (const file of await fs.readdir(staging)) {
+      const dest = path.join(out, file);
+      await fs.copyFile(path.join(staging, file), `${dest}.tmp`);
+      await fs.rename(`${dest}.tmp`, dest);
+      console.log(`captured ${dest}`);
     }
   } finally {
     cdp?.close();
