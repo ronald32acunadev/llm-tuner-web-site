@@ -4,11 +4,11 @@
 // Runs llm-tuner with an isolated XDG_CONFIG_HOME so the user's settings and presets are never touched.
 import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
+import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
 
-const SERVER_PORT = 7861;
-const DEBUG_PORT = 9333;
+const CHILD_TIMEOUT_MS = 15000;
 
 function parseArgs(argv) {
   const out = {};
@@ -21,9 +21,31 @@ function parseArgs(argv) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function poll(fn, timeoutMs, label) {
+// Asks the OS for an unused port so the capture never attaches to a server the user already runs.
+function getFreePort() {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.on('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const { port } = server.address();
+      server.close(() => resolve(port));
+    });
+  });
+}
+
+function guardAlive(child, name) {
+  return () => {
+    if (child.exitCode !== null || child.signalCode !== null) {
+      throw new Error(`${name} exited early (code ${child.exitCode}, signal ${child.signalCode})`);
+    }
+  };
+}
+
+// The guard runs outside the try so a dead child fails fast instead of timing out.
+async function poll(fn, timeoutMs, label, guard) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
+    guard?.();
     try {
       const value = await fn();
       if (value) return value;
@@ -64,22 +86,44 @@ class Cdp {
     this.ws = ws;
     this.nextId = 1;
     this.pending = new Map();
+    this.closed = false;
     ws.addEventListener('message', (event) => {
       const msg = JSON.parse(event.data);
-      if (!msg.id || !this.pending.has(msg.id)) return;
-      const { resolve, reject } = this.pending.get(msg.id);
+      if (!msg.id) return;
+      const entry = this.pending.get(msg.id);
+      if (!entry) return;
+      clearTimeout(entry.timer);
       this.pending.delete(msg.id);
-      if (msg.error) reject(new Error(msg.error.message));
-      else resolve(msg.result);
+      if (msg.error) entry.reject(new Error(msg.error.message));
+      else entry.resolve(msg.result);
     });
+    ws.addEventListener('close', () => this.failAll(new Error('CDP connection closed')));
+    ws.addEventListener('error', () => this.failAll(new Error('CDP connection error')));
   }
 
-  send(method, params = {}) {
+  failAll(error) {
+    for (const entry of this.pending.values()) {
+      clearTimeout(entry.timer);
+      entry.reject(error);
+    }
+    this.pending.clear();
+    this.closed = true;
+  }
+
+  send(method, params = {}, timeoutMs = 30000) {
+    if (this.closed || this.ws.readyState !== WebSocket.OPEN) {
+      return Promise.reject(new Error('CDP connection closed'));
+    }
     const id = this.nextId++;
-    return new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject });
-      this.ws.send(JSON.stringify({ id, method, params }));
+    const promise = new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.pending.delete(id);
+        reject(new Error(`CDP ${method} timed out after ${timeoutMs} ms`));
+      }, timeoutMs);
+      this.pending.set(id, { resolve, reject, timer });
     });
+    this.ws.send(JSON.stringify({ id, method, params }));
+    return promise;
   }
 
   close() {
@@ -96,6 +140,7 @@ async function evaluate(cdp, expression) {
 async function waitFor(cdp, expression, timeoutMs = 30000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
+    if (cdp.closed) throw new Error('CDP connection closed');
     try {
       if (await evaluate(cdp, expression)) return;
     } catch { /* page still loading */ }
@@ -118,18 +163,36 @@ async function screenshot(cdp, file, { width, height, scale }) {
 
 // ---------- Terminal capture ----------
 
-function runTerminal(llmtuner, args, env, { interruptAfterMs } = {}) {
+// Runs the CLI in a pseudo-terminal. Rejects instead of returning output when the run
+// timed out, exited with an error (non-interrupted runs), or never printed `expect`,
+// so a broken CLI can never overwrite a committed screenshot.
+function runTerminal(llmtuner, args, env, { interruptAfterMs, expect }) {
   const quoted = args.map((a) => `'${a.replaceAll("'", "'\\''")}'`).join(' ');
   const command = `node '${path.join(llmtuner, 'src/cli/index.js')}' ${quoted}`.trim();
-  return new Promise((resolve) => {
+  const label = `llm-tuner ${args.join(' ')}`.trim();
+  return new Promise((resolve, reject) => {
     const child = spawn('script', ['-qfec', command, '/dev/null'], { env, stdio: ['pipe', 'pipe', 'pipe'] });
     let output = '';
+    let stderr = '';
+    let timedOut = false;
     child.stdout.on('data', (chunk) => { output += chunk.toString('utf8'); });
+    child.stderr.on('data', (chunk) => { stderr += chunk.toString('utf8'); });
     const timers = [];
     if (interruptAfterMs) timers.push(setTimeout(() => child.stdin.write('\x03'), interruptAfterMs));
-    timers.push(setTimeout(() => child.kill('SIGKILL'), (interruptAfterMs ?? 15000) + 4000));
-    child.on('close', () => {
+    timers.push(setTimeout(() => {
+      timedOut = true;
+      child.kill('SIGKILL');
+    }, (interruptAfterMs ?? CHILD_TIMEOUT_MS) + 4000));
+    child.on('error', (error) => {
       timers.forEach(clearTimeout);
+      reject(new Error(`${label}: could not start script (${error.message})`));
+    });
+    child.on('close', (code) => {
+      timers.forEach(clearTimeout);
+      const tail = stripAnsi(`${output}\n${stderr}`).trim().split('\n').slice(-8).join('\n');
+      if (timedOut) return reject(new Error(`${label}: timed out\n${tail}`));
+      if (!interruptAfterMs && code !== 0) return reject(new Error(`${label}: exited with code ${code}\n${tail}`));
+      if (!stripAnsi(output).includes(expect)) return reject(new Error(`${label}: expected output "${expect}" not found\n${tail}`));
       resolve(output);
     });
   });
@@ -233,40 +296,63 @@ async function main() {
     return;
   }
 
+  const serverEntry = path.join(llmtuner, 'src/web/server.js');
+  const cliEntry = path.join(llmtuner, 'src/cli/index.js');
+  for (const entry of [serverEntry, cliEntry]) {
+    try {
+      await fs.access(entry);
+    } catch {
+      console.error(`Not an llm-tuner checkout: missing ${entry}`);
+      process.exitCode = 1;
+      return;
+    }
+  }
+
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'llmtuner-capture-'));
   const children = [];
   let cdp;
   try {
     await fs.mkdir(path.join(tmp, 'config'), { recursive: true });
     await fs.mkdir(out, { recursive: true });
+    const serverPort = await getFreePort();
     const childEnv = {
       ...process.env,
       XDG_CONFIG_HOME: path.join(tmp, 'config'),
-      PORT: String(SERVER_PORT),
+      PORT: String(serverPort),
       FORCE_COLOR: '1',
       COLUMNS: '80',
       LINES: '40',
     };
 
-    children.push(spawn(process.execPath, [path.join(llmtuner, 'src/web/server.js')], { env: childEnv, stdio: 'ignore' }));
-    const serverUrl = `http://127.0.0.1:${SERVER_PORT}/`;
-    await poll(async () => (await fetch(serverUrl)).ok, 20000, 'the desktop server');
+    const server = spawn(process.execPath, [serverEntry], { env: childEnv, stdio: 'ignore' });
+    children.push(server);
+    const serverAlive = guardAlive(server, 'llm-tuner desktop server');
+    const serverUrl = `http://127.0.0.1:${serverPort}/`;
+    await poll(async () => (await fetch(serverUrl)).ok, 20000, 'the desktop server', serverAlive);
 
     const chrome = await findChrome();
-    children.push(spawn(chrome, [
+    const chromeProfile = path.join(tmp, 'chrome');
+    // Port 0 lets Chrome pick a free port and report it in DevToolsActivePort.
+    const browser = spawn(chrome, [
       '--headless=new',
-      `--remote-debugging-port=${DEBUG_PORT}`,
-      `--user-data-dir=${path.join(tmp, 'chrome')}`,
+      '--remote-debugging-port=0',
+      `--user-data-dir=${chromeProfile}`,
       '--no-first-run',
       '--no-default-browser-check',
       '--hide-scrollbars',
       '--window-size=1200,860',
       'about:blank',
-    ], { stdio: 'ignore' }));
+    ], { stdio: 'ignore' });
+    children.push(browser);
+    const browserAlive = guardAlive(browser, 'Chrome');
+    const debugPort = await poll(async () => {
+      const [port] = (await fs.readFile(path.join(chromeProfile, 'DevToolsActivePort'), 'utf8')).split('\n');
+      return Number(port) || null;
+    }, 20000, 'Chrome DevTools port', browserAlive);
     const target = await poll(async () => {
-      const list = await (await fetch(`http://127.0.0.1:${DEBUG_PORT}/json/list`)).json();
+      const list = await (await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json();
       return list.find((t) => t.type === 'page');
-    }, 20000, 'Chrome DevTools');
+    }, 20000, 'Chrome DevTools', browserAlive);
 
     cdp = await Cdp.connect(target.webSocketDebuggerUrl);
     await cdp.send('Page.enable');
@@ -292,12 +378,15 @@ async function main() {
 
     // CLI
     const cliCaptures = [
-      { file: 'cli-01-menu.png', args: [], interruptAfterMs: 4000 },
-      { file: 'cli-05-help.png', args: ['--help'] },
-      { file: 'cli-06-mcp.png', args: ['/mcp'], interruptAfterMs: 6000 },
+      { file: 'cli-01-menu.png', args: [], interruptAfterMs: 4000, expect: 'Select a command' },
+      { file: 'cli-05-help.png', args: ['--help'], expect: 'Usage: llm-tuner' },
+      { file: 'cli-06-mcp.png', args: ['/mcp'], interruptAfterMs: 6000, expect: 'MCP server' },
     ];
-    for (const capture of cliCaptures) {
-      const raw = await runTerminal(llmtuner, capture.args, childEnv, capture);
+    // Run every CLI capture before writing any image, so one failure leaves all CLI screenshots untouched.
+    const outputs = [];
+    for (const capture of cliCaptures) outputs.push(await runTerminal(llmtuner, capture.args, childEnv, capture));
+    for (const [i, capture] of cliCaptures.entries()) {
+      const raw = outputs[i];
       // Show the standard Linux config path instead of the isolated temp dir.
       const html = terminalDocument(ansiToHtml(raw.replaceAll(childEnv.XDG_CONFIG_HOME, '~/.config')));
       await setViewport(cdp, 760, 400, 2);
