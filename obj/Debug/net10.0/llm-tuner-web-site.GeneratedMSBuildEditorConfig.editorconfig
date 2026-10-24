@@ -1,0 +1,97 @@
+is_global = true
+build_property.EnableAotAnalyzer = 
+build_property.EnableSingleFileAnalyzer = 
+build_property.EnableTrimAnalyzer = false
+build_property.IncludeAllContentForSelfExtract = 
+build_property.VerifyReferenceTrimCompatibility = 
+build_property.VerifyReferenceAotCompatibility = 
+build_property.TargetFramework = net10.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v10.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = browser
+build_property.RootNamespace = llm-tuner-web-site
+build_property.RootNamespace = llm-tuner-web-site
+build_property.ProjectDir = /run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = false
+build_property.RazorLangVersion = 9.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 10.0
+build_property.EnableCodeStyleSeverity = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Components/CommandBuilder.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Db21tYW5kQnVpbGRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Components/CopyButton.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Db3B5QnV0dG9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Components/DesktopAppMockup.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9EZXNrdG9wQXBwTW9ja3VwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Components/LanguageToggle.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYW5ndWFnZVRvZ2dsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Components/ProfileComparator.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Qcm9maWxlQ29tcGFyYXRvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Components/TerminalMockup.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9UZXJtaW5hbE1vY2t1cC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Components/ThemeToggle.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9UaGVtZVRvZ2dsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0L01haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Pages/Architecture.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQXJjaGl0ZWN0dXJlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Pages/Commands.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ29tbWFuZHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSG9tZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Pages/NotFound.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTm90Rm91bmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Pages/Profiles.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJvZmlsZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Pages/Showcase.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hvd2Nhc2UucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/Pages/WhatIsIt.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvV2hhdElzSXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/run/media/pumba/Proyects/Proyects/Web/llm-tuner-web-site/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
