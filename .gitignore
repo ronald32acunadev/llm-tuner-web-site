@@ -53,6 +53,68 @@ local.properties
 **/ios/Flutter/Flutter.podspec
 
 # ==============================================================================
+# .NET & C#
+# ==============================================================================
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+
+# Visual Studio / Rider / User settings
+.vs/
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+*.binlog
+
+# Build & Test outputs
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# Roslyn, MSBuild & NuGet
+*.GeneratedMSBuildEditorConfig.editorconfig
+project.lock.json
+project.fragment.lock.json
+*.nuget.props
+*.nuget.targets
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# Publish output
+publish/
+*.[Pp]ublish.xml
+*.azurePubxml
+PublishScripts/
+
+# Cache files
+*.[Cc]ache
+!?*.[Cc]ache/
+
+# ==============================================================================
 # IDEs & System Files
 # ==============================================================================
 # macOS

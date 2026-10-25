@@ -64,5 +64,9 @@ The stylesheet is dark only. `ThemeService`, `Components/ThemeToggle.razor`, and
 
 ## Known inconsistencies
 
-- The uncommitted `README.md` in the working tree describes a generic "Project Setup Template", not this site. The committed version (`git show HEAD:README.md`) describes the project but is stale in places: it mentions IBM Plex as the primary font, a working theme switcher, port 5000, and `dotnet publish -o dist`.
-- `Agents/readme-generator.md` is a subagent definition, unrelated to the application code.
+- `README.md` and `README.es.md` (its translation; keep both in sync) describe a working Dark/Light/System theme engine with LocalStorage persistence, which does not exist (see above). `README.es.md` also still says port 5000.
+- The "Project Context" section of `AGENTS.md` describes a generic setup template, not this site; ignore it in favor of this file.
+
+## Syncing with llm-tuner
+
+When `llm-tuner` changes (flags, profiles, version, screenshots), use the project skill `.claude/skills/sync-llmtuner/` instead of editing by hand. The version also appears in the README badges, not only in `Layout/MainLayout.razor`.
