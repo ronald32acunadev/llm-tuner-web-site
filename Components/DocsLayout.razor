@@ -1,0 +1,108 @@
+@inject DocumentationDataService DocData
+@implements IDisposable
+
+<details class="docs-mobile-nav">
+    <summary>@(DocData.CurrentLanguage == "es" ? "En esta página" : "On this page")</summary>
+    @NavLinks
+</details>
+
+<div class="docs-layout">
+    <aside class="docs-sidebar">
+        @NavLinks
+    </aside>
+    <article class="docs-content">
+        @foreach (var group in Groups)
+        {
+            <h2 class="docs-group-title">@group.Label</h2>
+            @foreach (var s in Sections.Where(x => x.Group == group.Id))
+            {
+                <section id="@s.Id" class="docs-section">
+                    <h3>@s.Title <a class="docs-anchor" href="@($"{Route}#{s.Id}")" aria-label="Link">#</a></h3>
+                    @foreach (var p in s.Paragraphs)
+                    {
+                        <p>@p</p>
+                    }
+                    @foreach (var ex in s.Examples)
+                    {
+                        @if (!string.IsNullOrEmpty(ex.Caption))
+                        {
+                            <p class="docs-caption">@ex.Caption</p>
+                        }
+                        <div class="docs-code">
+                            <pre><code>@ex.Code</code></pre>
+                            <CopyButton Text="@ex.Code" Label="@(DocData.CurrentLanguage == "es" ? "Copiar" : "Copy")" />
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(s.ImagePath))
+                    {
+                        <figure class="docs-figure">
+                            <img src="@s.ImagePath" alt="@s.ImageAlt" loading="lazy" />
+                        </figure>
+                    }
+                    @if (s.Options.Any())
+                    {
+                        @foreach (var optGroup in s.Options.GroupBy(o => o.Group))
+                        {
+                            if (!string.IsNullOrEmpty(optGroup.Key))
+                            {
+                                <h4 class="docs-option-group">@optGroup.Key</h4>
+                            }
+                            <ul class="docs-options">
+                                @foreach (var o in optGroup)
+                                {
+                                    <li>
+                                        <code class="docs-flag">@o.Flag</code>
+                                        <span class="docs-option-desc">@o.Description</span>
+                                        @if (!string.IsNullOrEmpty(o.DefaultValue))
+                                        {
+                                            <span class="docs-default">@(DocData.CurrentLanguage == "es" ? "Por defecto:" : "Default:") @o.DefaultValue</span>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    }
+                    @if (SectionFooter is not null)
+                    {
+                        @SectionFooter(s)
+                    }
+                </section>
+            }
+        }
+    </article>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public List<DocSection> Sections { get; set; } = default!;
+    [Parameter, EditorRequired] public List<DocGroup> Groups { get; set; } = default!;
+    [Parameter, EditorRequired] public string Route { get; set; } = default!;
+    [Parameter] public RenderFragment<DocSection>? SectionFooter { get; set; }
+
+    private RenderFragment NavLinks => @<nav class="docs-nav">
+        @foreach (var group in Groups)
+        {
+            <div class="docs-nav-group">
+                <div class="docs-nav-title">@group.Label</div>
+                @foreach (var s in Sections.Where(x => x.Group == group.Id))
+                {
+                    <a href="@($"{Route}#{s.Id}")">@s.Title</a>
+                }
+            </div>
+        }
+    </nav>;
+
+    protected override void OnInitialized()
+    {
+        DocData.OnLanguageChanged += HandleLangChanged;
+    }
+
+    private void HandleLangChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        DocData.OnLanguageChanged -= HandleLangChanged;
+    }
+}

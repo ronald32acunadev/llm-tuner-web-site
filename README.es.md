@@ -23,11 +23,10 @@ El portal ofrece simulaciones interactivas de alta fidelidad para las interfaces
 ## Características Principales
 
 - **Vistas Enrutadas Independientes**: Secciones modulares con rutas dedicadas (`/` o `/overview`, `/what`, `/showcase`, `/commands`, `/profiles`, `/architecture`).
-- **Muestrario Visual Interactivo**:
-  - **Simulador de Terminal CLI (`TerminalMockup.razor`)**: 7 pestañas interactivas que cubren el menú persistente de slash commands (`llm-tuner`), asistente guiado (`/load`), ejecución headless en una sola línea, registro de servidores MCP (`/mcp`), inspección de presets (`/presets`), panel de configuración interactivo (`/settings`) y manual de ayuda (`--help`).
-  - **Simulador de App de Escritorio (`DesktopAppMockup.razor`)**: Muestrario de 6 pasos de la interfaz Electron con telemetría continua de hardware (Dual RTX 5070), selección de modelo con acierto instantáneo de presets, progreso de benchmark en tiempo real, probador de inferencia en vivo, panel de preferencias y modal de configuración MCP.
+- **Páginas en Formato de Documentación**: `/commands`, `/showcase` y `/profiles` comparten un mismo layout (`DocsLayout.razor`) con barra lateral fija, una sección por tema, bloques de código copiables y listas de opciones; en el celular la barra lateral se convierte en un menú "En esta página".
+- **Muestrario Pantalla por Pantalla (`/showcase`)**: 13 capturas reales, 7 de la terminal (menú de comandos, asistente `/load`, modo no interactivo, `/mcp`, `/presets`, `/settings`, `--help`) y 6 de escritorio (elección de motor, modelo y perfil, carga desde preset, prueba de chat, configuración y registro MCP), cada una con su explicación y comando.
 - **Generador Interactivo de Comandos (`CommandBuilder.razor`)**: Configurador visual de motor, modelo, contexto (con sufijos `8k`, `16k`, `32k`, `64k`), perfil y modificadores, con vista previa de sintaxis inmediata y copiado al portapapeles en un clic.
-- **Referencia Completa de CLI y Slash Commands**: Documentación estructurada de slash commands (`/load`, `/mcp`, `/presets`, `/settings`, `/help`, `/exit`) y banderas CLI (`--engine`, `--model`, `--ctx`, `--profile`, `--force`, `--candidates`, `--yes`, `--dry-run`, `--presets`, `--json`, `--lang`, `--theme`, `--help / -h`, `--version / -v`).
+- **Documentación de CLI y Escritorio (`/commands`)**: Una sección por slash command (`/load`, `/chat`, `/mcp`, `/presets`, `/serve`, `/settings`, `/help`, `/exit`), ejemplos de automatización, una referencia de opciones con todas las banderas agrupadas por tema y la app de escritorio pantalla por pantalla.
 - **Análisis de Perfiles de Carga**: Matriz interactiva que compara los objetivos de `speed`, `balanced` (por defecto) y `quality`, detallando cuantizaciones de KV cache (`f16`, `q8_0`, `q4_0`) y compensaciones de rendimiento.
 - **Arquitectura y Persistencia**: Diagramas técnicos que detallan la inspección de tensores GGUF, balanceo multi-GPU por ancho de banda PCIe, offload a RAM para modelos MoE y rutas estándar de almacenamiento de presets (`~/.config/llm-tuner/presets/` en Linux/macOS, `%APPDATA%\llm-tuner\presets\` en Windows).
 - **Sistema de Diseño y Marca**: Interfaz en modo oscuro dedicada con tokens CSS que implementan la paleta oficial (cian eléctrico `#00e5ff`, púrpura `#9a00ff`, lima neón `#65ff00`, rojo eléctrico `#ff1a00`), tipografía Ubuntu y Ubuntu Mono e iconografía Icons8 Line Awesome.
@@ -55,15 +54,14 @@ llm-tuner-web-site/
 ├── Pages/
 │   ├── Home.razor           # Sección principal, pestañas de instalación y telemetría técnica
 │   ├── WhatIsIt.razor       # Filosofía, fundamentación y comparativa frente al ensayo y error
-│   ├── Showcase.razor       # Muestrario interactivo de interfaces CLI y Desktop
-│   ├── Commands.razor       # Generador de comandos y tabla de referencia de parámetros
+│   ├── Showcase.razor       # Capturas de la CLI y del escritorio, pantalla por pantalla
+│   ├── Commands.razor       # Documentación de la CLI y del escritorio, y generador de comandos
 │   ├── Profiles.razor       # Análisis detallado de perfiles speed, balanced y quality
 │   ├── Architecture.razor   # Modelado de memoria, partición multi-GPU, MoE y rutas de presets
 │   └── NotFound.razor       # Manejador de ruta no encontrada (404)
 ├── Components/
 │   ├── CommandBuilder.razor # Constructor interactivo de sintaxis CLI con soporte de sufijos
-│   ├── TerminalMockup.razor # Simulador de terminal con capturas en alta resolución (7 pestañas)
-│   ├── DesktopAppMockup.razor# Simulador de Electron con capturas en alta resolución (6 pasos)
+│   ├── DocsLayout.razor     # Layout de documentación compartido: barra lateral, secciones, código y opciones
 │   ├── ProfileComparator.razor# Matriz comparativa de restricciones y tipos de KV cache
 │   ├── CopyButton.razor     # Botón reutilizable de copiado al portapapeles
 │   ├── LanguageToggle.razor # Conmutador bilingüe Inglés / Español
@@ -79,7 +77,7 @@ llm-tuner-web-site/
 ├── wwwroot/
 │   ├── css/site.css         # Tokens de diseño y estilos globales (Paleta modo oscuro)
 │   ├── js/site.js           # Funciones JS de interop para portapapeles y tema
-│   ├── screenshots/         # Capturas en alta resolución para los simuladores
+│   ├── screenshots/         # Capturas reales de la CLI y del escritorio usadas en /showcase
 │   └── index.html           # Plantilla host de la SPA y carga de fuentes
 ├── firebase.json            # Configuración de Firebase Hosting y reglas SPA
 ├── llm-tuner-web-site.csproj# Especificación del proyecto .NET 10 Blazor

@@ -2,48 +2,29 @@
 @inject DocumentationDataService DocData
 @implements IDisposable
 
-<PageTitle>@(DocData.CurrentLanguage == "es" ? "Muestrario Visual — LLM Tuner" : "Visual Showcase — LLM Tuner")</PageTitle>
+<PageTitle>@(DocData.CurrentLanguage == "es" ? "Muestrario — LLM Tuner" : "Showcase — LLM Tuner")</PageTitle>
 
 <div class="page-container" style="max-width:1150px;margin:0 auto;padding:40px 24px 80px;">
     <header class="section-header" style="margin-bottom:28px;">
         <h1 style="font-size:2rem;font-weight:700;color:var(--color-text-strong);letter-spacing:-0.02em;margin-bottom:8px;">
-            @(DocData.CurrentLanguage == "es" ? "Muestrario Visual de Ejecuciones" : "Visual Execution Showcase")
+            @(DocData.CurrentLanguage == "es" ? "Muestrario" : "Showcase")
         </h1>
         <p style="color:var(--color-text-weak);font-size:1rem;margin:0;">
-            @(DocData.CurrentLanguage == "es"
-                ? "Interactúa con las interfaces reales generadas por el paquete llm-tuner con telemetría en vivo sobre Dual RTX 5070."
-                : "Interact with live mockups faithful to the exact experiences on your local machine.")
+            @(DocData.CurrentLanguage == "es" 
+                ? "Capturas reales de la CLI y la app de escritorio de llm-tuner, pantalla por pantalla." 
+                : "Real screenshots of the llm-tuner CLI and desktop app, screen by screen.")
         </p>
     </header>
 
-    <!-- Mode Selector Tabs (OpenCode style) -->
-    <div style="display:flex;gap:20px;border-bottom:1px solid var(--color-border-weak);margin-bottom:24px;">
-        <button type="button" class="install-tab-btn @(showcaseMode == "terminal" ? "active" : "")"
-                style="padding-bottom:10px;font-size:0.95rem;display:inline-flex;align-items:center;gap:8px;"
-                @onclick="@(() => showcaseMode = "terminal")">
-            <i class="las la-terminal" style="font-size:1.2rem;"></i>
-            <span>@(DocData.CurrentLanguage == "es" ? "Terminal CLI (Menú / MCP / Headless / Presets)" : "Terminal CLI Interface")</span>
-        </button>
-        <button type="button" class="install-tab-btn @(showcaseMode == "desktop" ? "active" : "")"
-                style="padding-bottom:10px;font-size:0.95rem;display:inline-flex;align-items:center;gap:8px;"
-                @onclick="@(() => showcaseMode = "desktop")">
-            <i class="las la-desktop" style="font-size:1.2rem;"></i>
-            <span>@(DocData.CurrentLanguage == "es" ? "Aplicación Desktop (Electron)" : "Desktop Electron GUI")</span>
-        </button>
-    </div>
-
-    @if (showcaseMode == "terminal")
-    {
-        <TerminalMockup />
-    }
-    else
-    {
-        <DesktopAppMockup />
-    }
+    <DocsLayout Sections="@DocData.GetShowcaseSections()" Groups="@groups" Route="showcase" />
 </div>
 
 @code {
-    private string showcaseMode = "desktop";
+    private List<DocGroup> groups => new()
+    {
+        new() { Id = "cli", Label = "CLI" },
+        new() { Id = "desktop", Label = DocData.CurrentLanguage == "es" ? "Escritorio" : "Desktop" }
+    };
 
     protected override void OnInitialized()
     {

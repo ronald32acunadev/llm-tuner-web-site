@@ -13,7 +13,9 @@ Before implementing a requested change, the planning agent must:
 
 1. Inspect the existing project and clarify only unresolved requirements.
 2. Break the request into small, independently verifiable user stories. Use stable IDs (`US-01`, `US-02`), a simple "As a ..., I want ..., so that ..." statement, acceptance criteria, dependencies, and a verification method. A small change may need only one story; do not invent scope to fill a backlog.
-3. Review the complete backlog for coverage, feasibility, dependencies, and unnecessary work, then show it to the user before generating implementation code or editing implementation files.
+3. Review the complete backlog for coverage, feasibility, dependencies, and unnecessary work, then save it to `docs/userstories/{featurename}/README.md` relative to the active project's root before generating implementation code or editing implementation files. Automatically derive `{featurename}` from the new request's intent as a short, descriptive English `kebab-case` name; do not ask the user to name it. For example, "Add Google authentication" becomes `docs/userstories/google-authentication/README.md`. Reuse that path for follow-up prompts about the same feature. For an unrelated feature with a colliding name, generate a distinct descriptive name without overwriting existing stories. This is a project-relative path, not the filesystem-root `/docs/` or the setup template's directory when working in another project.
+   - Keep the full stories, acceptance criteria, dependencies, verification methods, execution mode, status, and observed verification results in that file, including for small backlogs. Creating this planning document does not authorize implementation.
+   - Keep chat replies short: a brief summary, story count or progress, a link to the file, and the required approval question or blocking decision. Do not paste the complete backlog or repeat the file's details unless the user asks. Follow the file-first presentation pattern used by Superpowers, without requiring that plugin.
 4. Ask, in the user's language: "Do you approve this backlog, and should I implement all stories or proceed one at a time?" Stop and wait. Approval of the design alone is not backlog approval; an ambiguous answer does not select an execution mode.
 
 The user's explicit approval and execution choice authorize only that backlog:
@@ -22,7 +24,7 @@ The user's explicit approval and execution choice authorize only that backlog:
 - **One at a time**: implement and verify only the next approved story, show its changes and verification results, then stop for explicit approval before starting another. Never silently advance.
 - **Revision**: update the affected stories and obtain approval of the revised scope before implementing them. Preserve completed work and its evidence.
 
-Track each story as pending, in progress, blocked, or complete; complete requires observed acceptance checks. Keep a small backlog in the conversation; reuse the existing feature/task document for larger work rather than creating competing trackers. Read-only questions do not require an implementation backlog.
+Track each story as pending, in progress, blocked, or complete in the feature's user-story file; complete requires observed acceptance checks. Update that file after each story and approved scope revision, reporting only a concise summary and link in chat. If another feature/task document is required, link it rather than duplicating its execution log or creating competing story trackers. Read-only questions do not require an implementation backlog.
 
 ## Planning and Implementation Roles
 
@@ -73,7 +75,7 @@ Local models are the owner's dedicated code synthesizers, exposed to agents as M
 
 ## Workflow
 
-1. **Explore, Plan, and Obtain Approval**: Prepare and review the complete backlog, then obtain explicit approval and the all-stories or one-at-a-time choice before implementation. Do not ask local models to explore; they have no filesystem or repository access.
+1. **Explore, Plan, and Obtain Approval**: Prepare and review the complete backlog in `docs/userstories/{featurename}/README.md` of the active project, automatically naming the feature from the request as described above. Share only a short summary and file link in chat, then obtain explicit approval and the all-stories or one-at-a-time choice before implementation. Do not ask local models to explore; they have no filesystem or repository access.
 2. **Resolve Library Facts (Cache-Aside Flow)**: Before every code request, resolve the current state of every library the task touches using the `.context/` cache or Context7, and build the Library Context Brief. Never send a code request without it.
 3. **Prepare Prompt**:
    - Select the implementer through the hierarchy above. Call `pumbastudio`, `pumbalama`, or the available lightweight hosted implementer with a self-contained prompt that follows the Prompt Template below.

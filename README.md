@@ -23,11 +23,10 @@ The portal provides high-fidelity simulations of both the terminal CLI and Elect
 ## Key Features
 
 - **Independent Routed Views**: Dedicated pages for each core area (`/` or `/overview`, `/what`, `/showcase`, `/commands`, `/profiles`, `/architecture`).
-- **Interactive Visual Showcase**:
-  - **Terminal CLI Mockup (`TerminalMockup.razor`)**: 7 interactive tabs covering the persistent slash command menu (`llm-tuner`), guided load wizard (`/load`), headless one-liner execution, MCP server registration (`/mcp`), saved presets inspection (`/presets`), interactive settings drawer (`/settings`), and help manual (`--help`).
-  - **Desktop App Mockup (`DesktopAppMockup.razor`)**: 6-step Electron GUI showcase featuring continuous hardware telemetry (Dual RTX 5070), model selection with instant preset hits, real-time benchmark progress, live token generation tester, user preferences drawer, and MCP server modal.
+- **Documentation-Style Pages**: `/commands`, `/showcase`, and `/profiles` share one layout (`DocsLayout.razor`) with a sticky sidebar, one section per topic, copyable code blocks, and option lists; on phones the sidebar becomes an "On this page" menu.
+- **Screen-by-Screen Showcase (`/showcase`)**: 13 real screenshots, 7 terminal screens (command menu, `/load` wizard, non-interactive mode, `/mcp`, `/presets`, `/settings`, `--help`) and 6 desktop screens (engine selection, model and profile, preset load, chat test, settings, MCP registration), each with its explanation and command.
 - **Interactive Command Builder (`CommandBuilder.razor`)**: Visual configurator for engine, model, context size (with `8k`, `16k`, `32k`, `64k` shorthand), load profile, and execution flags with instant syntax preview and one-click clipboard copying.
-- **Complete CLI & Slash Commands Reference**: Structured documentation covering all supported slash commands (`/load`, `/mcp`, `/presets`, `/settings`, `/help`, `/exit`) and CLI flags (`--engine`, `--model`, `--ctx`, `--profile`, `--force`, `--candidates`, `--yes`, `--dry-run`, `--presets`, `--json`, `--lang`, `--theme`, `--help / -h`, `--version / -v`).
+- **CLI and Desktop Documentation (`/commands`)**: A section for every slash command (`/load`, `/chat`, `/mcp`, `/presets`, `/serve`, `/settings`, `/help`, `/exit`), automation examples, an options reference with every flag grouped by topic, and the desktop app screen by screen.
 - **Load Profiles Breakdown**: Side-by-side comparison matrix for `speed`, `balanced` (default), and `quality` tuning profiles, detailing KV cache quantization targets (`f16`, `q8_0`, `q4_0`) and selection trade-offs.
 - **Architecture & System Persistence**: Clear breakdowns explaining GGUF tensor inspection, multi-GPU allocation by PCIe bandwidth, RAM offloading for MoE models, and standard OS preset persistence directories (`~/.config/llm-tuner/presets/` on Linux/macOS, `%APPDATA%\llm-tuner\presets\` on Windows).
 - **Brand Design System**: Dedicated dark mode interface built with custom CSS design tokens reflecting the official brand palette: electric cyan (`#00e5ff`), purple (`#9a00ff`), neon lime (`#65ff00`), and electric red (`#ff1a00`), alongside Ubuntu and Ubuntu Mono typography and Icons8 Line Awesome iconography.
@@ -55,15 +54,14 @@ llm-tuner-web-site/
 ├── Pages/
 │   ├── Home.razor           # Hero section, quick install tabs, and performance telemetry
 │   ├── WhatIsIt.razor       # Problem statement, philosophy, and comparison vs guessing
-│   ├── Showcase.razor       # Interactive Terminal and Desktop GUI mockup switcher
-│   ├── Commands.razor       # Interactive command builder and CLI argument reference
+│   ├── Showcase.razor       # Screen-by-screen CLI and desktop screenshots
+│   ├── Commands.razor       # CLI and desktop documentation plus the command builder
 │   ├── Profiles.razor       # Detailed breakdown of speed, balanced, and quality profiles
 │   ├── Architecture.razor   # Memory modeling, multi-GPU split, MoE offloading, and preset paths
 │   └── NotFound.razor       # 404 handler
 ├── Components/
 │   ├── CommandBuilder.razor # Live interactive CLI command generator with shorthand support
-│   ├── TerminalMockup.razor # Tabbed terminal showcase with high-res captures (7 tabs)
-│   ├── DesktopAppMockup.razor# Step-by-step Electron GUI showcase with high-res captures (6 steps)
+│   ├── DocsLayout.razor     # Shared docs layout: sidebar, sections, code blocks, options
 │   ├── ProfileComparator.razor# Matrix comparing profile constraints and KV cache types
 │   ├── CopyButton.razor     # One-click clipboard copy button
 │   ├── LanguageToggle.razor # English / Spanish switcher
@@ -79,7 +77,7 @@ llm-tuner-web-site/
 ├── wwwroot/
 │   ├── css/site.css         # Global design tokens and component styling (Dark mode palette)
 │   ├── js/site.js           # Clipboard and theme JS interop functions
-│   ├── screenshots/         # High-resolution captures for terminal and desktop mockups
+│   ├── screenshots/         # Real CLI and desktop captures used by /showcase
 │   └── index.html           # SPA host shell and font imports
 ├── firebase.json            # Firebase Hosting configuration and SPA rewrites
 ├── llm-tuner-web-site.csproj# .NET 10 Blazor project specification

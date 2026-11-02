@@ -1,93 +1,60 @@
 ---
 name: sync-llmtuner
-description: Sync the site with the latest changes in the llm-tuner repository (CLI and desktop app). Use when the user says llm-tuner changed, asks to update/sync/refresh the site content, the version pill, or the showcase screenshots.
+description: "Trigger: llm-tuner changed, sync/update/refresh site content, version pill, or screenshots. Brings the site in line with the llm-tuner CLI and desktop app."
+license: MIT
+metadata:
+  author: Ronald Daniel Acuña Arias
+  version: "2.0.0"
 ---
 
-# Sync site with llm-tuner
+## Activation Contract
 
-The site content is hand-copied from the sibling repository `../llmtuner` (the `llm-tuner` npm package). This skill brings the site up to date with it, CLI and desktop app included, and refreshes the real screenshots.
+Load this skill when the user says llm-tuner changed, asks to sync, update, or refresh the site content, the version pill, or the showcase screenshots, or reports that the site is missing something llm-tuner has. The source repository is `../../Desktop/llmtuner` (the `llm-tuner` npm package).
 
-Run the whole process without asking for approval at each step. Stop only if a step fails.
+## Hard Rules
 
-## 1. Find what changed
+- Run every step without asking for approval; stop only when a step fails or a Decision Gate says to ask.
+- Take every fact from llm-tuner sources (`references/content-map.md`); never infer behavior. Quote desktop labels verbatim from `src/i18n/en.js` and `es.js`.
+- Do not treat llm-tuner's own `--help` as complete; confirm commands and flags in `src/cli/router.js` and `src/cli/commands/*.js`.
+- Update English and Spanish together; flags, commands, and identifiers stay in English.
+- Code examples are full commands taken from the README or code, never a lone flag.
+- Content edits go in the `Get*Sections()` data methods. New components, pages, or logic follow `AGENTS.md`: backlog approval first, code through the local model.
+- Never stop or restart a dev server you did not start; stop your own preview when verification ends.
+- Do not commit or deploy unless the user asks.
 
-The last synced version is the version pill in `Layout/MainLayout.razor` (`vX.Y.Z`).
+## Decision Gates
 
-```bash
-grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' Layout/MainLayout.razor
-node -p "require('../llmtuner/package.json').version"
-git -C ../llmtuner log --oneline --format='%h %s' | grep -n 'bump version'
-```
+| Situation | Action |
+| --- | --- |
+| `../../Desktop/llmtuner` is missing | Find it with `find ../.. -maxdepth 3 -type d -name llmtuner`, use that path, and update the paths in this skill |
+| llm-tuner `package.json` version is not on npm (`npm view llm-tuner versions`) | Ask before syncing an unreleased version |
+| llm-tuner has uncommitted README changes | Use them only after confirming each claim in its source code |
+| Versions match and no commits follow the release commit | Run the coverage audit (step 3); stop only if it finds no gaps |
+| A manual-capture screen changed | Keep the image, say in its caption what it no longer shows, and tell the user |
+| Port 5299 is taken | It is the user's server: preview with `site-alt` (port 5310) and tell the user to restart theirs, because a rebuild makes a running dev server return 404 for `_framework` files |
 
-Find the commit that bumped the llm-tuner version to the site's version, then list everything after it:
+## Execution Steps
 
-```bash
-git -C ../llmtuner log --oneline <bump-commit>..HEAD
-git -C ../llmtuner diff --stat <bump-commit>..HEAD -- src electron
-git -C ../llmtuner diff <bump-commit>..HEAD -- README.md
-```
+1. Compare the version pill in `Layout/MainLayout.razor` with llm-tuner `package.json`; find the `bump version` or `prepare version` commit for the site's version.
+2. List changes after it: `git log`, `git diff --stat -- src electron`, `git diff -- README.md`. Skip internal-only changes.
+3. Coverage audit: map every README section and `src/i18n` key group to its site location in `references/content-map.md`; list gaps.
+4. Update the site content for every change and gap.
+5. Refresh screenshots per `references/screenshots.md` and inspect each regenerated image.
+6. Verify per `references/verification.md`.
 
-If the versions match and nothing user-facing changed, report that the site is current and stop.
+## Output Contract
 
-Primary sources for user-facing facts. Read these, not the whole diff:
+Report in the user's language:
+- llm-tuner version range synced, or that the site was already current.
+- Site files changed and gaps fixed.
+- Screenshots regenerated and screens that need a manual capture.
+- Verification results, including anything not verified.
+- Upstream issues noticed in llm-tuner (for example incomplete `--help`).
+- That nothing was committed or deployed, unless the user asked.
 
-| What | Where in `../llmtuner` |
-|------|------------------------|
-| Commands, flags, help text (EN/ES) | `src/i18n/en.js`, `src/i18n/es.js` (`cli.help`, `cli.*`, `web.*`) |
-| Command routing and accepted args | `src/cli/router.js`, `src/cli/commands/*.js` |
-| Desktop UI | `src/web/public/index.html`, `src/web/public/app.js` |
-| Feature summary | `README.md`, `README.es.md` |
+## References
 
-Skip internal-only changes (refactors, engine fixes with no visible effect, tests).
-
-## 2. Update the site content
-
-Every user-facing string exists in English and Spanish, and both must be updated. Flags, commands, and identifiers stay in English in both languages.
-
-| Change in llm-tuner | Site file |
-|---------------------|-----------|
-| Version | `Layout/MainLayout.razor` pill, `--version` example in `Services/DocumentationDataService.cs` |
-| Commands and flags | `GetCommands()` in `Services/DocumentationDataService.cs`; a new `Category` also goes into `commandCategories` in `Pages/Commands.razor` |
-| Execution modes | `GetExecutionModes()` in the same service |
-| Load profiles | `GetProfiles()` in the same service |
-| New headline feature | a pillar card in `Pages/WhatIsIt.razor` (copy an existing card) |
-| Command builder options | `Components/CommandBuilder.razor` |
-| Screenshot captions and tabs | `Components/TerminalMockup.razor` (`cliTabs`), `Components/DesktopAppMockup.razor` (`steps`) |
-
-Follow the project conventions in `CLAUDE.md`: inline `DocData.CurrentLanguage == "es" ? ... : ...`, semantic `--color-*` variables, and Line Awesome icons. Source code goes through the local model first, as `AGENTS.md` requires.
-
-## 3. Refresh screenshots
-
-```bash
-node .claude/skills/sync-llmtuner/scripts/capture.mjs --llmtuner ../llmtuner --out wwwroot/screenshots
-```
-
-The script starts the real desktop server and CLI from `../llmtuner` with an isolated `XDG_CONFIG_HOME`, so the user's settings and presets are never touched. It drives headless Chrome over CDP, using free ports for both the server and Chrome. Screenshots are staged and copied into the output folder only when every capture succeeds, so a failed run exits non-zero and changes no screenshot. Requirements: Node 22+, Chrome or Chromium (`CHROME_BIN` overrides the path), and `script` (util-linux).
-
-It regenerates these files:
-
-| File | Content |
-|------|---------|
-| `01-engine-selection.png` | Desktop engine selection with the "Add as MCP" buttons |
-| `06-mcp-modal.png` | Desktop "Add as MCP Server" modal |
-| `cli-01-menu.png` | CLI slash command menu (`llm-tuner`) |
-| `cli-05-help.png` | `llm-tuner --help` |
-| `cli-06-mcp.png` | First step of `llm-tuner /mcp` |
-
-The remaining screenshots were taken with a real model loaded (Qwen3 Coder 30B) and are not regenerated: `02`–`05` desktop and `cli-01-wizard`, `cli-02-headless`, `cli-03-presets`, `cli-04-settings`. If llm-tuner changed those screens, tell the user they need a manual capture.
-
-When a new screen deserves a capture, add it to `capture.mjs` (desktop steps or the `cliCaptures` list) and add the matching tab in the mockup component.
-
-Open every regenerated image with the Read tool and check it before continuing. The image should be in dark theme, English, and show no temp paths.
-
-## 4. Verify
-
-```bash
-dotnet build
-```
-
-Then start the `site` preview (`.claude/launch.json`, port 5299) and check `/showcase` (both tabs), `/commands`, and `/what` in English and Spanish.
-
-## 5. Report
-
-Summarize the llm-tuner version range synced, the site files changed, the screenshots regenerated, and anything that still needs a manual capture. Do not commit or deploy unless the user asks. Deploying means `dotnet publish -c Release` followed by `firebase deploy --only hosting`.
+- `references/content-map.md` — llm-tuner sources and the site location for each kind of change.
+- `references/screenshots.md` — capture script, regenerated files, manual captures.
+- `references/verification.md` — build, preview, and browser checks, with known pitfalls.
+- `scripts/capture.mjs` — screenshot capture script.

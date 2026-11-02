@@ -22,12 +22,12 @@
             <i class="las la-folder-open" style="font-size:1.4rem;color:var(--color-accent);"></i>
             <div>
                 <h3 style="font-size:1.15rem;font-weight:600;color:var(--color-text-strong);margin:0 0 4px;">
-                    @(DocData.CurrentLanguage == "es" ? "Rutas de Almacenamiento de Presets" : "Preset Storage Locations")
+                    @(DocData.CurrentLanguage == "es" ? "Rutas de Configuración y Presets" : "Configuration & Preset Locations")
                 </h3>
                 <p style="color:var(--color-text-weak);font-size:0.85rem;margin:0;">
                     @(DocData.CurrentLanguage == "es"
-                        ? "Los presets generados son persistidos en directorios estándar según el sistema operativo, permitiendo cargas instantáneas."
-                        : "Presets are saved to standard OS configuration directories for instant load times.")
+                        ? "La configuración (settings.json), la configuración del servidor (server.json) y los presets (presets/*.json) se guardan en el directorio de configuración del usuario. Se puede cambiar con la variable de entorno LLM_TUNER_CONFIG_DIR."
+                        : "Settings (settings.json), server config (server.json), and presets (presets/*.json) are stored in the per-user configuration directory. Override it with the LLM_TUNER_CONFIG_DIR environment variable.")
                 </p>
             </div>
         </header>
@@ -37,21 +37,22 @@
                 <span style="color:var(--color-text-strong);font-weight:600;display:inline-flex;align-items:center;gap:8px;">
                     <i class="lab la-linux" style="font-size:1.3rem;color:var(--color-accent);"></i> Linux
                 </span>
-                <code style="color:var(--color-accent);word-break:break-all;">~/.config/llm-tuner/presets/</code>
+                <code style="color:var(--color-accent);word-break:break-all;">~/.config/llm-tuner/</code>
+                <code style="color:var(--color-text-weak);word-break:break-all;">$XDG_CONFIG_HOME/llm-tuner/</code>
             </div>
 
             <div style="background:var(--color-background);border:1px solid var(--color-border-weak);padding:16px;border-radius:6px;display:flex;flex-direction:column;gap:8px;">
                 <span style="color:var(--color-text-strong);font-weight:600;display:inline-flex;align-items:center;gap:8px;">
                     <i class="lab la-apple" style="font-size:1.3rem;color:var(--color-accent);"></i> macOS
                 </span>
-                <code style="color:var(--color-accent);word-break:break-all;">~/Library/Application Support/llm-tuner/presets/</code>
+                <code style="color:var(--color-accent);word-break:break-all;">~/Library/Application Support/llm-tuner/</code>
             </div>
 
             <div style="background:var(--color-background);border:1px solid var(--color-border-weak);padding:16px;border-radius:6px;display:flex;flex-direction:column;gap:8px;">
                 <span style="color:var(--color-text-strong);font-weight:600;display:inline-flex;align-items:center;gap:8px;">
                     <i class="lab la-windows" style="font-size:1.3rem;color:var(--color-accent);"></i> Windows
                 </span>
-                <code style="color:var(--color-accent);word-break:break-all;">%APPDATA%\llm-tuner\presets\</code>
+                <code style="color:var(--color-accent);word-break:break-all;">%APPDATA%\llm-tuner\</code>
             </div>
         </div>
     </div>
@@ -103,6 +104,54 @@
                 @(DocData.CurrentLanguage == "es"
                     ? "Genera una firma SHA criptográfica basada en CPU, GPUs y RAM disponible, garantizando que los presets se apliquen con total fidelidad."
                     : "Builds a cryptographic SHA signature based on CPU, GPUs, and available RAM, ensuring cache hits load in under 20 seconds.")
+            </p>
+        </div>
+
+        <div class="panel" style="padding:24px;background:var(--color-background-weak);border:1px solid var(--color-border-weak);border-radius:8px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:6px;background:var(--color-accent-dim);display:flex;align-items:center;justify-content:center;color:var(--color-accent);font-size:1.2rem;">
+                    <i class="las la-server"></i>
+                </div>
+                <h3 style="font-size:1.05rem;font-weight:600;color:var(--color-text-strong);margin:0;">
+                    @(DocData.CurrentLanguage == "es" ? "Contexto de Servidor Activo" : "Active Server Context")
+                </h3>
+            </div>
+            <p style="color:var(--color-text);font-size:0.88rem;line-height:1.5;margin:0;">
+                @(DocData.CurrentLanguage == "es"
+                    ? "Al elegir un servidor remoto, el hardware, los modelos, la planificación, los presets, la carga, el chat y el progreso pasan a ese servidor. La configuración del cliente, las actualizaciones y la configuración de agentes siguen siendo locales. Desde otra computadora se usa la IP de red del servidor, no 0.0.0.0 ni localhost."
+                    : "Selecting a remote server switches hardware, models, planning, presets, loading, chat, and job progress to that server. Client settings, updates, and agent configuration stay local. From another computer, use the server's LAN address, not 0.0.0.0 or localhost.")
+            </p>
+        </div>
+
+        <div class="panel" style="padding:24px;background:var(--color-background-weak);border:1px solid var(--color-border-weak);border-radius:8px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:6px;background:var(--color-accent-dim);display:flex;align-items:center;justify-content:center;color:var(--color-accent);font-size:1.2rem;">
+                    <i class="las la-shield-alt"></i>
+                </div>
+                <h3 style="font-size:1.05rem;font-weight:600;color:var(--color-text-strong);margin:0;">
+                    @(DocData.CurrentLanguage == "es" ? "Seguridad del Modo Servidor" : "Server Mode Security")
+                </h3>
+            </div>
+            <p style="color:var(--color-text);font-size:0.88rem;line-height:1.5;margin:0;">
+                @(DocData.CurrentLanguage == "es"
+                    ? "Cada petición remota requiere Authorization: Bearer <token>, verificado en tiempo constante. Las respuestas remotas ocultan datos que identifican al equipo (distro, CPU, buses PCI, UUID de GPU) y /api/install y /api/models/download quedan bloqueados (403). El servidor usa HTTP: el token no cifra el tráfico, así que úsalo en una red local de confianza."
+                    : "Every remote request requires Authorization: Bearer <token>, verified in constant time. Remote responses strip host-identifying details (distro, CPU, PCI buses, GPU UUIDs), and /api/install and /api/models/download are blocked (403). The server uses HTTP: the token does not encrypt traffic, so use it on a trusted LAN.")
+            </p>
+        </div>
+
+        <div class="panel" style="padding:24px;background:var(--color-background-weak);border:1px solid var(--color-border-weak);border-radius:8px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:6px;background:var(--color-accent-dim);display:flex;align-items:center;justify-content:center;color:var(--color-accent);font-size:1.2rem;">
+                    <i class="las la-user-shield"></i>
+                </div>
+                <h3 style="font-size:1.05rem;font-weight:600;color:var(--color-text-strong);margin:0;">
+                    @(DocData.CurrentLanguage == "es" ? "Autorización del Servicio Ollama" : "Ollama Service Authorization")
+                </h3>
+            </div>
+            <p style="color:var(--color-text);font-size:0.88rem;line-height:1.5;margin:0;">
+                @(DocData.CurrentLanguage == "es"
+                    ? "En Linux, cambiar las variables del servicio de Ollama (OLLAMA_KV_CACHE_TYPE, OLLAMA_FLASH_ATTENTION) puede pedir autorización de administrador (sudo o pkexec). Si la configuración ya está al día, el servicio no se reinicia, y el modo --json nunca pide contraseña."
+                    : "On Linux, changing Ollama service variables (OLLAMA_KV_CACHE_TYPE, OLLAMA_FLASH_ATTENTION) may ask for administrator authorization (sudo or pkexec). If settings are already current, the service is not restarted, and --json mode never asks for a password.")
             </p>
         </div>
     </div>

@@ -1,4 +1,5 @@
 @inject DocumentationDataService DocData
+@implements IDisposable
 
 <div class="generator-panel panel">
     <header>
@@ -69,6 +70,16 @@
                 <option value="quality">quality (Max precision)</option>
             </select>
         </div>
+
+        <div class="form-group">
+            <label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px;">
+                @(DocData.CurrentLanguage == "es" ? "Servidor (--server):" : "Server (--server):")
+            </label>
+            <input type="text" @bind="server" @bind:event="oninput" class="form-control" style="width:100%;padding:6px 10px;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;color:var(--ink);font-family:var(--mono);font-size:0.85rem;" placeholder="e.g. gpu-rig" />
+            <span style="font-size:0.7rem;color:var(--muted);margin-top:4px;display:block;">
+                @(DocData.CurrentLanguage == "es" ? "Vacío = esta máquina" : "Empty = this machine")
+            </span>
+        </div>
     </div>
 
     <!-- Flags toggles -->
@@ -107,10 +118,26 @@
 </div>
 
 @code {
+    protected override void OnInitialized()
+    {
+        DocData.OnLanguageChanged += HandleLangChanged;
+    }
+
+    private void HandleLangChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        DocData.OnLanguageChanged -= HandleLangChanged;
+    }
+
     private string engine = "lmstudio";
     private string model = "qwen/qwen2.5-coder-32b";
     private string ctx = "16k";
     private string profile = "balanced";
+    private string server = "";
     private bool yesFlag = true;
     private bool forceFlag = false;
     private bool dryRunFlag = false;
@@ -127,7 +154,15 @@
 
     private string BuildCommand()
     {
-        var cmd = $"llm-tuner --engine {engine} --model {model} --ctx {ctx} --profile {profile}";
+        string serverPart = "";
+        if (!string.IsNullOrWhiteSpace(server))
+        {
+            var trimmed = server.Trim();
+            var value = trimmed.Any(char.IsWhiteSpace) ? $"\"{trimmed}\"" : trimmed;
+            serverPart = $" --server {value}";
+        }
+
+        var cmd = $"llm-tuner{serverPart} --engine {engine} --model {model} --ctx {ctx} --profile {profile}";
         if (yesFlag) cmd += " --yes";
         if (forceFlag) cmd += " --force";
         if (dryRunFlag) cmd += " --dry-run";
